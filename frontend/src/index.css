@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-gray-50 text-gray-900 antialiased;
+  /* `cursor` is inherited, so this makes all UI text show the arrow (not I-beam). */
+  cursor: default;
+}
+
+/* Interactive elements (and their children, via inheritance) get a pointer. */
+button,
+a,
+[role="button"],
+label,
+summary,
+select {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Real text fields keep the I-beam. */
+input,
+textarea,
+[contenteditable="true"] {
+  cursor: text;
+}

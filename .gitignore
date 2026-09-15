@@ -1,0 +1,63 @@
+# ---- Secrets / environment ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+auth.json
+
+# ---- Dependencies ----
+node_modules/
+vendor/
+
+# ---- Build output ----
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+frontend/.flowbite-react/
+
+# ---- Laravel runtime ----
+backend/storage/*.key
+backend/storage/app/public
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/testing/*
+backend/storage/framework/views/*
+backend/storage/logs/*
+backend/bootstrap/cache/*
+backend/public/hot
+backend/public/storage
+backend/public/build
+.phpunit.result.cache
+.phpunit.cache/
+
+# ---- Databases ----
+*.sqlite
+*.sqlite-journal
+*.sqlite3
+*.db
+
+# ---- Logs ----
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ---- Test artifacts ----
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+coverage/
+
+# ---- Editors / OS ----
+.vscode/
+.idea/
+.nova/
+.zed/
+.cursor/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
