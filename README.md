@@ -305,6 +305,7 @@ Request and response shapes, validation rules, error formats and rate limits are
 | [Contributing](CONTRIBUTING.md) | Local setup, coding standards, commit conventions |
 | [Changelog](CHANGELOG.md) | Release history |
 | [Security policy](SECURITY.md) | How to report a vulnerability |
+| [Code of conduct](CODE_OF_CONDUCT.md) | Contributor Covenant v2.1 |
 
 ## Roadmap
 

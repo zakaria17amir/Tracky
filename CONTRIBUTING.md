@@ -138,6 +138,8 @@ Node version, browser) help when the behaviour is not reproducible everywhere.
 
 For security vulnerabilities, do **not** open a public issue — see [SECURITY.md](SECURITY.md).
 
+Participation in this project is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Project layout
 
 Where things live, when you are looking for the right file:
