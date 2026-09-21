@@ -61,3 +61,6 @@ coverage/
 Thumbs.db
 desktop.ini
 *.swp
+
+# ---- Tool output ----
+.playwright-mcp/

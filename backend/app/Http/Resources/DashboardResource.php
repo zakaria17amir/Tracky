@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Dashboard;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Models\Dashboard
+ * @mixin Dashboard
  */
 class DashboardResource extends JsonResource
 {

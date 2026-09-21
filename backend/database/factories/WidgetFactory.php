@@ -4,10 +4,11 @@ namespace Database\Factories;
 
 use App\Models\Dashboard;
 use App\Models\Metric;
+use App\Models\Widget;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<\App\Models\Widget>
+ * @extends Factory<Widget>
  */
 class WidgetFactory extends Factory
 {

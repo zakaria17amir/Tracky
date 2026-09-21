@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Metric;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Models\Metric
+ * @mixin Metric
  */
 class MetricResource extends JsonResource
 {

@@ -1,0 +1,66 @@
+version: 2
+
+updates:
+  # Frontend — npm
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'chore(deps)'
+      prefix-development: 'chore(deps-dev)'
+    groups:
+      react:
+        patterns:
+          - 'react'
+          - 'react-dom'
+          - '@types/react'
+          - '@types/react-dom'
+          - 'react-router-dom'
+      dev-tooling:
+        patterns:
+          - 'eslint*'
+          - '@eslint/*'
+          - 'typescript'
+          - 'vite'
+          - '@vitejs/*'
+          - 'cypress'
+      styling:
+        patterns:
+          - 'tailwindcss'
+          - 'flowbite*'
+          - 'postcss'
+          - 'autoprefixer'
+
+  # Backend — Composer
+  - package-ecosystem: composer
+    directory: /backend
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'chore(deps)'
+      prefix-development: 'chore(deps-dev)'
+    groups:
+      laravel:
+        patterns:
+          - 'laravel/*'
+      dev-tooling:
+        patterns:
+          - 'phpunit/*'
+          - 'mockery/*'
+          - 'nunomaduro/*'
+          - 'fakerphp/*'
+
+  # CI workflows — GitHub Actions
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: 'ci(deps)'

@@ -9,6 +9,7 @@ use App\Http\Resources\EntryResource;
 use App\Models\Entry;
 use App\Models\Metric;
 use App\Services\EntryWriter;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -67,7 +68,7 @@ class EntryController extends Controller
     /**
      * Upsert multiple entries in one request (Quick Log "Save All").
      */
-    public function bulk(BulkEntryRequest $request): \Illuminate\Http\JsonResponse
+    public function bulk(BulkEntryRequest $request): JsonResponse
     {
         $userId = $request->user()->id;
 

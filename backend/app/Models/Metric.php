@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\MetricFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Metric extends Model
 {
-    /** @use HasFactory<\Database\Factories\MetricFactory> */
+    /** @use HasFactory<MetricFactory> */
     use HasFactory;
 
     protected $fillable = [

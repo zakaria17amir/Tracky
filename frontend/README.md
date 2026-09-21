@@ -1,16 +1,50 @@
-# React + Vite
+# Tracky — SPA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The React 19 + TypeScript single-page client for [Tracky](../README.md), built with Vite.
 
-Currently, two official plugins are available:
+## Run it
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev          # http://localhost:5173
+```
 
-## React Compiler
+The dev server proxies `/api` to the Laravel API on `http://127.0.0.1:8000`, so
+[the backend](../backend/README.md) must be running too.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Scripts
 
-## Expanding the ESLint configuration
+| Command | Does |
+| --- | --- |
+| `npm run dev` | Dev server with HMR |
+| `npm run build` | Type-check, then build to `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run typecheck` | `tsc` only |
+| `npm run lint` | ESLint |
+| `npm run e2e` | Cypress headless (both servers must be running) |
+| `npm run cypress:open` | Cypress interactive |
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Layout
+
+| Path | Contents |
+| --- | --- |
+| `src/pages/` | Route-level screens |
+| `src/features/` | Per-domain API hooks and feature components |
+| `src/components/layout/` | `AppLayout`, `AuthLayout`, nav definitions |
+| `src/components/guards/` | Route gating — UX only, never load-bearing for security |
+| `src/components/ui/` | Reusable primitives — fields, dialogs, empty/error states |
+| `src/context/` | Auth and toast providers |
+| `src/lib/` | axios client, query client, formatters, error mapping |
+| `src/types.ts` | Shared types mirroring the API resources |
+| `cypress/e2e/` | End-to-end specs |
+
+## Conventions
+
+- **Strict TypeScript, no `any`.** The build fails on type errors.
+- **Server state lives in TanStack Query**, never copied into `useState`. Client state (modals,
+  drafts, toasts) lives in React state or context.
+- **Pages compose hooks**; they never call axios directly.
+- **`src/types.ts` mirrors the Laravel JSON Resources** — change a resource, change the type in the
+  same commit, and `tsc` catches the drift.
+
+More context in [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md#frontend).

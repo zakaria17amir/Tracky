@@ -1,0 +1,76 @@
+name: Bug report
+description: Something is not working as expected
+title: '[Bug]: '
+labels: ['bug']
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. The two things that make a bug actionable are exact reproduction
+        steps and what you expected instead.
+
+        **Found a security vulnerability?** Do not file it here — see
+        [SECURITY.md](https://github.com/zakaria17amir/Tracky/blob/main/SECURITY.md).
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened
+      description: A clear description of the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      value: |
+        1. Sign in as …
+        2. Go to …
+        3. Click …
+        4. See the error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where does it occur?
+      options:
+        - Frontend (SPA)
+        - Backend (API)
+        - Both
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      value: |
+        - OS:
+        - PHP version:
+        - Node version:
+        - Browser:
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs, errors or screenshots
+      description: >
+        Browser console output, the API response, or `backend/storage/logs/laravel.log`.
+        Redact any tokens before pasting.
+      render: shell
+    validations:
+      required: false

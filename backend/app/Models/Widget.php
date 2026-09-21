@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\WidgetFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Widget extends Model
 {
-    /** @use HasFactory<\Database\Factories\WidgetFactory> */
+    /** @use HasFactory<WidgetFactory> */
     use HasFactory;
 
     protected $fillable = [

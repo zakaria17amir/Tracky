@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\DashboardFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Dashboard extends Model
 {
-    /** @use HasFactory<\Database\Factories\DashboardFactory> */
+    /** @use HasFactory<DashboardFactory> */
     use HasFactory;
 
     protected $fillable = [
