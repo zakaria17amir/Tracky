@@ -10,9 +10,6 @@ body:
         Thanks for the report. The two things that make a bug actionable are exact reproduction
         steps and what you expected instead.
 
-        **Found a security vulnerability?** Do not file it here — see
-        [SECURITY.md](https://github.com/zakaria17amir/Tracky/blob/main/SECURITY.md).
-
   - type: textarea
     id: description
     attributes:

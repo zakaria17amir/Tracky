@@ -9,7 +9,6 @@ and build dashboards out of configurable chart widgets.
 
 [![CI](https://github.com/zakaria17amir/Tracky/actions/workflows/ci.yml/badge.svg)](https://github.com/zakaria17amir/Tracky/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/zakaria17amir/Tracky/actions/workflows/codeql.yml/badge.svg)](https://github.com/zakaria17amir/Tracky/actions/workflows/codeql.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -302,10 +301,7 @@ Request and response shapes, validation rules, error formats and rate limits are
 | [Data model](docs/DATA-MODEL.md) | Tables, relationships, indexes, constraints, and why value columns are split by type |
 | [Testing](docs/TESTING.md) | What is tested at which layer, and how to run and extend the suites |
 | [Deployment](docs/DEPLOYMENT.md) | Production build, environment variables, and Postgres/MySQL migration notes |
-| [Contributing](CONTRIBUTING.md) | Local setup, coding standards, commit conventions |
 | [Changelog](CHANGELOG.md) | Release history |
-| [Security policy](SECURITY.md) | How to report a vulnerability |
-| [Code of conduct](CODE_OF_CONDUCT.md) | Contributor Covenant v2.1 |
 
 ## Roadmap
 
@@ -314,7 +310,3 @@ Request and response shapes, validation rules, error formats and rate limits are
 - [ ] Reminders for metrics left unlogged
 - [ ] Shareable read-only dashboard links
 - [ ] Postgres as the default driver, with a Docker Compose setup
-
-## License
-
-Released under the [MIT License](LICENSE). © Zakaria Amir Abdullah
