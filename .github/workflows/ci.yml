@@ -161,7 +161,7 @@ jobs:
         run: npm ci
 
       - name: Run Cypress
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           working-directory: frontend
           install: false
