@@ -13,7 +13,7 @@ and build dashboards out of configurable chart widgets.
 [![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Tests](https://img.shields.io/badge/tests-51%20passing-brightgreen)](#testing)
+[![Tests](https://img.shields.io/badge/tests-50%20passing-brightgreen)](#testing)
 
 <img src="docs/screenshots/dashboard.png" alt="Tracky dashboard showing line, bar, stat and streak widgets" width="100%">
 
@@ -48,7 +48,7 @@ safe to expose even though the SPA is currently its only client.
 | **Bulk "Quick Log"** | Log every active metric for a day in a single request, upserting on `(metric_id, logged_date)`. |
 | **Admin oversight** | A role-gated and deliberately **read-only** admin view — admins manage accounts, never someone's data. |
 | **Fully responsive** | The desktop sidebar collapses into a mobile tab bar; tables reflow into stacked cards. |
-| **Tested end to end** | 51 PHPUnit feature tests over the API contract, plus Cypress specs driving the real UI. |
+| **Tested end to end** | 50 PHPUnit feature tests over the API contract, plus Cypress specs driving the real UI. |
 
 ## Screenshots
 

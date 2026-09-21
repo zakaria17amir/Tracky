@@ -201,7 +201,7 @@ Factories exist for every model (`UserFactory`, `MetricFactory`, `EntryFactory`,
 
 | Suite | Count | Scope |
 | --- | --- | --- |
-| PHPUnit feature | 51 tests, 122 assertions | API contract, auth, ownership, cascades, validation |
+| PHPUnit feature | 50 tests, 121 assertions | API contract, auth, ownership, cascades, validation |
 | Cypress E2E | 3 specs, 7 journeys | Registration, login, metric CRUD, logging, widget creation |
 
 Component-level unit tests for the React tree are the main gap. The E2E specs cover the critical

@@ -61,7 +61,7 @@ First public release.
 - Centralized API error mapping, including per-field validation messages
 
 **Testing**
-- 51 PHPUnit feature tests (122 assertions) covering the API contract, ownership, cascades and
+- 50 PHPUnit feature tests (121 assertions) covering the API contract, ownership, cascades and
   validation
 - Cypress E2E specs covering registration, login, metric CRUD, logging and widget creation
 
