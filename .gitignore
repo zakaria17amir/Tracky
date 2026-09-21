@@ -15,7 +15,6 @@ dist/
 dist-ssr/
 build/
 *.tsbuildinfo
-frontend/.flowbite-react/
 
 # ---- Laravel runtime ----
 backend/storage/*.key

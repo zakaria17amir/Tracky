@@ -87,7 +87,7 @@ safe to expose even though the SPA is currently its only client.
 
 ## Tech stack
 
-**Backend** — Laravel 13 · PHP 8.3+ · SQLite · Laravel Sanctum (Bearer tokens) · Laravel Breeze ·
+**Backend** — Laravel 13 · PHP 8.4+ · SQLite · Laravel Sanctum (Bearer tokens) · Laravel Breeze ·
 Eloquent policies · PHPUnit · Pint
 
 **Frontend** — React 19 · TypeScript (strict) · Vite · React Router 7 · TanStack Query ·
@@ -192,7 +192,7 @@ the split value columns are in [`docs/DATA-MODEL.md`](docs/DATA-MODEL.md).
 
 ## Quick start
 
-**Prerequisites:** PHP 8.3+ with `pdo_sqlite`, Composer 2, Node.js 20+.
+**Prerequisites:** PHP 8.4+ with `pdo_sqlite`, Composer 2, Node.js 20+.
 
 ```bash
 git clone https://github.com/zakaria17amir/Tracky.git

@@ -5,7 +5,7 @@ This document covers local setup, the standards the code is held to, and what CI
 
 ## Getting set up
 
-**Prerequisites:** PHP 8.3+ with `pdo_sqlite`, Composer 2, Node.js 20+.
+**Prerequisites:** PHP 8.4+ with `pdo_sqlite`, Composer 2, Node.js 20+.
 
 ```bash
 git clone https://github.com/zakaria17amir/Tracky.git

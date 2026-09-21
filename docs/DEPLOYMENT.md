@@ -162,7 +162,7 @@ server {
     }
 
     location @laravel {
-        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
         fastcgi_param SCRIPT_FILENAME /var/www/tracky/backend/public/index.php;
         include fastcgi_params;
     }
