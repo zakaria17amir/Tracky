@@ -12,7 +12,7 @@ and build dashboards out of configurable chart widgets.
 [![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Tests](https://img.shields.io/badge/tests-60%20passing-brightgreen)](#testing)
+[![Tests](https://img.shields.io/badge/tests-69%20passing-brightgreen)](#testing)
 
 <img src="docs/screenshots/dashboard.png" alt="Tracky dashboard showing line, bar, stat and streak widgets" width="100%">
 
@@ -42,12 +42,12 @@ safe to expose even though the SPA is currently its only client.
 |---|---|
 | **Type-driven metrics** | One `type` column changes the log input, the available chart types, and the summary maths. |
 | **Composable dashboards** | Drop line / bar / stat / streak widgets onto named dashboards; each widget is configured independently. |
-| **Drag-and-drop reordering** | Optimistic reorder with automatic rollback when the server rejects it (dnd-kit + TanStack Query). |
+| **Drag-and-drop reordering** | Optimistic reorder with automatic rollback when the server rejects it (dnd-kit). |
 | **Defense in depth** | Middleware → policies → query scoping. Frontend route guards are UX only and never load-bearing. |
 | **Bulk "Quick Log"** | Log every active metric for a day in a single request, upserting on `(metric_id, logged_date)`. |
 | **Admin oversight** | A role-gated and deliberately **read-only** admin view — admins manage accounts, never someone's data. |
 | **Fully responsive** | The desktop sidebar collapses into a mobile tab bar; tables reflow into stacked cards. |
-| **Tested at every layer** | 50 PHPUnit feature tests over the API contract, Vitest + React Testing Library for components, and Cypress specs driving the real UI. |
+| **Tested at every layer** | 50 PHPUnit feature tests over the API contract, Vitest + React Testing Library for reducers and components, and Cypress specs driving the real UI. |
 
 ## Screenshots
 
@@ -89,7 +89,7 @@ safe to expose even though the SPA is currently its only client.
 **Backend** — Laravel 13 · PHP 8.4+ · SQLite · Laravel Sanctum (Bearer tokens) · Laravel Breeze ·
 Eloquent policies · PHPUnit · Pint
 
-**Frontend** — React 19 · TypeScript (strict) · Vite · React Router 7 · TanStack Query ·
+**Frontend** — React 19 · TypeScript (strict) · Vite · React Router 7 · TanStack Query · Redux Toolkit ·
 Tailwind CSS · Flowbite React · Recharts · dnd-kit · Vitest · React Testing Library · Cypress
 
 **Tooling** — GitHub Actions (tests, lint, type-check, build, E2E) · CodeQL · Dependabot
@@ -100,8 +100,10 @@ Tailwind CSS · Flowbite React · Recharts · dnd-kit · Vitest · React Testing
 flowchart LR
     subgraph Client["React SPA (Vite)"]
         UI["Pages and components"]
-        RQ["TanStack Query<br/>cache + optimistic updates"]
+        RX["Redux Toolkit<br/>widget-builder UI state"]
+        RQ["TanStack Query<br/>server-state cache"]
         AX["axios<br/>Bearer interceptor"]
+        UI --> RX
         UI --> RQ --> AX
     end
 
@@ -269,6 +271,7 @@ Tracky/
 │   │   ├── features/            API hooks and feature components
 │   │   ├── lib/                 axios client, query client, formatters
 │   │   ├── pages/               route-level screens
+│   │   ├── store.ts             Redux store (widget-builder UI state)
 │   │   └── types.ts             shared contract mirroring API resources
 │   └── cypress/e2e/             end-to-end specs
 ├── docs/                      architecture, API, data model, testing, deployment

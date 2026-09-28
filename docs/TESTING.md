@@ -155,6 +155,13 @@ default widget config.
 **`features/widgets/WidgetCard.test.tsx`** — loading spinner, stat card value and comparison, empty
 state for a chart with no entries.
 
+**`features/widgets/widgetBuilderSlice.test.ts`** — every builder transition as a pure reducer:
+open for new vs. edit, metric selection, chart choice resetting config, back never below step one,
+close resetting everything.
+
+**`features/widgets/WidgetConfigurator.test.tsx`** — the configurator against a real store: a
+boolean metric only offers Stat Card and Streak, and Back returns to the metric list.
+
 ## Frontend E2E
 
 Cypress specs drive a real browser against both running servers. They are kept few and broad: each
@@ -223,5 +230,5 @@ Factories exist for every model (`UserFactory`, `MetricFactory`, `EntryFactory`,
 | Suite | Count | Scope |
 | --- | --- | --- |
 | PHPUnit feature | 50 tests, 121 assertions | API contract, auth, ownership, cascades, validation |
-| Vitest + RTL | 10 tests | Chart data shaping, widget render states |
+| Vitest + RTL | 19 tests | Chart data shaping, builder reducer, widget and configurator rendering |
 | Cypress E2E | 3 specs, 7 journeys | Registration, login, metric CRUD, logging, widget creation |

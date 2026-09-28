@@ -10,6 +10,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Vitest + React Testing Library suite for the SPA, run in CI
+- Redux Toolkit store holding the widget builder's UI state; server state stays in TanStack Query
 
 ### Changed
 

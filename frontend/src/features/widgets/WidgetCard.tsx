@@ -3,11 +3,12 @@ import { CSS } from "@dnd-kit/utilities";
 import { Spinner } from "flowbite-react";
 import { EntryChart, StatWidget, StreakWidget } from "./WidgetCharts";
 import { useMetricEntries, useMetricSummary } from "../entries";
+import { useAppDispatch } from "../../store";
+import { openBuilder } from "./widgetBuilderSlice";
 import type { Widget } from "../../types";
 
 interface WidgetCardProps {
   widget: Widget;
-  onEdit: (widget: Widget) => void;
   onDelete: (widget: Widget) => void;
 }
 
@@ -18,7 +19,8 @@ const CHART_LABEL: Record<string, string> = {
   streak: "Streak",
 };
 
-export default function WidgetCard({ widget, onEdit, onDelete }: WidgetCardProps) {
+export default function WidgetCard({ widget, onDelete }: WidgetCardProps) {
+  const dispatch = useAppDispatch();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: widget.id,
   });
@@ -56,7 +58,7 @@ export default function WidgetCard({ widget, onEdit, onDelete }: WidgetCardProps
           </button>
           <button
             type="button"
-            onClick={() => onEdit(widget)}
+            onClick={() => dispatch(openBuilder(widget))}
             className="rounded p-1 text-gray-400 hover:bg-gray-100"
             aria-label="Edit widget"
             title="Edit"

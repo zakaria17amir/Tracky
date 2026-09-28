@@ -186,9 +186,10 @@ src/
 │   ├── layout/        AppLayout, AuthLayout, nav definitions
 │   └── ui/            reusable primitives — fields, dialogs, states
 ├── context/           AuthContext, ToastContext
-├── features/          one module per domain: API hooks + feature components
+├── features/          one module per domain: API hooks + feature components (+ Redux slices)
 ├── lib/               axios instance, query client, formatters, error mapping
 ├── pages/             route-level screens
+├── store.ts           Redux store and typed hooks
 └── types.ts           shared types mirroring the API resources
 ```
 
@@ -202,20 +203,38 @@ The distinction drives the whole data layer:
 
 - **Server state** — metrics, entries, dashboards, widgets — lives in **TanStack Query**. It is
   cached, deduplicated, invalidated on mutation, and never copied into component state.
-- **Client state** — the current session, toasts, modal open/closed, form drafts — lives in React
-  context or local state.
+- **Shared UI state** — the widget builder — lives in **Redux Toolkit**
+  (`features/widgets/widgetBuilderSlice.ts`).
+- **Local client state** — the current session, toasts, simple form drafts — lives in React
+  context or component state.
 
-Because server data is never mirrored into `useState`, there is no class of bug where a list and a
-detail view disagree after an edit.
+Because server data is never mirrored into `useState` or Redux, there is no class of bug where a list
+and a detail view disagree after an edit.
+
+#### Why the widget builder is in Redux
+
+The builder is a three-step wizard (metric → chart → config) opened from several places: the page
+header, the empty-state card, the "add" tile and every widget's edit button. Its state is a small
+state machine — choosing a chart resets the config to that chart's defaults, editing starts at step
+two with the metric locked, going back never drops below step one. As `useState` spread across the
+page and the modal, that logic lived in a reset `useEffect` and `open`/`editingWidget` props were
+drilled into every card.
+
+As a slice, each transition is a named, pure reducer case (`openBuilder`, `selectMetric`,
+`chooseChart`, `setConfigField`, `back`, `closeBuilder`) that is unit-tested without rendering
+anything, and any component opens the builder with `dispatch(openBuilder(widget))`. Redux holds
+only IDs and draft config — never metrics or widgets fetched from the API — so it cannot drift from
+the server.
 
 ### Optimistic updates
 
 Widget reordering is optimistic, which is where drag-and-drop earns its keep:
 
-1. `onMutate` cancels in-flight queries for the dashboard and snapshots the current widget order.
-2. The cache is written to the new order immediately, so the card stays where it was dropped.
-3. If the request fails, `onError` restores the snapshot and a toast explains why.
-4. `onSettled` invalidates, reconciling with whatever the server actually stored.
+1. The dashboard page keeps the rendered widget order in local state, synced from the query result.
+2. On drop, the previous order is kept and the new order is rendered immediately, so the card stays
+   where it was dropped.
+3. If the reorder request fails, the previous order is restored and a toast explains why.
+4. On success the dashboard query is invalidated, reconciling with whatever the server stored.
 
 The user sees an instant reorder, and a failure is visibly corrected rather than silently lost.
 

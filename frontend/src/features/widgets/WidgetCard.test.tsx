@@ -2,7 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
+import { Provider } from "react-redux";
 import WidgetCard from "./WidgetCard";
+import { makeStore } from "../../store";
 import type { Metric, Widget } from "../../types";
 
 const hooks = vi.hoisted(() => ({
@@ -29,11 +31,13 @@ function widget(overrides: Partial<Widget> = {}): Widget {
 
 function renderCard(w: Widget) {
   return render(
-    <DndContext>
-      <SortableContext items={[w.id]}>
-        <WidgetCard widget={w} onEdit={() => {}} onDelete={() => {}} />
-      </SortableContext>
-    </DndContext>,
+    <Provider store={makeStore()}>
+      <DndContext>
+        <SortableContext items={[w.id]}>
+          <WidgetCard widget={w} onDelete={() => {}} />
+        </SortableContext>
+      </DndContext>
+    </Provider>,
   );
 }
 

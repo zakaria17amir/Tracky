@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   Button,
   Label,
@@ -14,14 +14,20 @@ import { useMetrics } from "../metrics";
 import { useCreateWidget, useUpdateWidget } from "../widgets";
 import { useToast } from "../../context/ToastContext";
 import { errorMessage } from "../../lib/errors";
-import { CHART_COLORS, defaultConfig } from "../../lib/widgetData";
-import type { ChartType, Metric, Widget, WidgetConfig } from "../../types";
+import { CHART_COLORS } from "../../lib/widgetData";
+import { useAppDispatch, useAppSelector } from "../../store";
+import {
+  back,
+  chooseChart,
+  closeBuilder,
+  selectMetric,
+  setConfigField,
+  setSearch,
+} from "./widgetBuilderSlice";
+import type { ChartType, Metric, WidgetConfig } from "../../types";
 
 interface WidgetConfiguratorProps {
-  open: boolean;
   dashboardId: number;
-  widget?: Widget | null; // present when editing
-  onClose: () => void;
 }
 
 interface ChartOption {
@@ -44,40 +50,17 @@ function allowedCharts(metric: Metric | undefined): ChartOption[] {
   return ALL_CHARTS;
 }
 
-export default function WidgetConfigurator({
-  open,
-  dashboardId,
-  widget,
-  onClose,
-}: WidgetConfiguratorProps) {
+export default function WidgetConfigurator({ dashboardId }: WidgetConfiguratorProps) {
+  const dispatch = useAppDispatch();
+  const { open, editingWidget: widget, step, metricId, chartType, config, search } = useAppSelector(
+    (state) => state.widgetBuilder,
+  );
   const isEdit = !!widget;
   const toast = useToast();
   const { data: metrics } = useMetrics();
   const createWidget = useCreateWidget(dashboardId);
   const updateWidget = useUpdateWidget(dashboardId);
-
-  const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [metricId, setMetricId] = useState<number | null>(null);
-  const [chartType, setChartType] = useState<ChartType | null>(null);
-  const [config, setConfig] = useState<WidgetConfig>({});
-  const [search, setSearch] = useState("");
-
-  // Initialize when opening.
-  useEffect(() => {
-    if (!open) return;
-    if (widget) {
-      setMetricId(widget.metric_id);
-      setChartType(widget.chart_type);
-      setConfig(widget.config ?? defaultConfig(widget.chart_type));
-      setStep(2); // metric is locked when editing
-    } else {
-      setMetricId(null);
-      setChartType(null);
-      setConfig({});
-      setStep(1);
-    }
-    setSearch("");
-  }, [open, widget]);
+  const onClose = () => dispatch(closeBuilder());
 
   const selectedMetric = metrics?.find((m) => m.id === metricId);
 
@@ -87,15 +70,8 @@ export default function WidgetConfigurator({
     return list.filter((m) => m.name.toLowerCase().includes(search.toLowerCase()));
   }, [metrics, search]);
 
-  function chooseChart(type: ChartType) {
-    setChartType(type);
-    // Type-narrow config to the new chart type's defaults.
-    setConfig(defaultConfig(type));
-    setStep(3);
-  }
-
   function setCfg<K extends keyof WidgetConfig>(key: K, value: WidgetConfig[K]) {
-    setConfig((prev) => ({ ...prev, [key]: value }));
+    dispatch(setConfigField({ key, value }));
   }
 
   async function submit() {
@@ -148,7 +124,7 @@ export default function WidgetConfigurator({
             <TextInput
               placeholder="Search metrics…"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => dispatch(setSearch(e.target.value))}
               className="mb-3"
             />
             <div className="flex max-h-72 flex-col gap-2 overflow-y-auto">
@@ -159,10 +135,7 @@ export default function WidgetConfigurator({
                 <button
                   key={metric.id}
                   type="button"
-                  onClick={() => {
-                    setMetricId(metric.id);
-                    setStep(2);
-                  }}
+                  onClick={() => dispatch(selectMetric(metric.id))}
                   className={`flex items-center justify-between rounded-lg border px-4 py-3 text-left transition hover:border-brand-400 ${
                     metricId === metric.id ? "border-brand-500 bg-brand-50" : "border-gray-200"
                   }`}
@@ -188,7 +161,7 @@ export default function WidgetConfigurator({
                 <button
                   key={opt.type}
                   type="button"
-                  onClick={() => chooseChart(opt.type)}
+                  onClick={() => dispatch(chooseChart(opt.type))}
                   className={`rounded-lg border p-4 text-left transition hover:border-brand-400 ${
                     chartType === opt.type ? "border-brand-500 bg-brand-50" : "border-gray-200"
                   }`}
@@ -295,7 +268,7 @@ export default function WidgetConfigurator({
           color="light"
           onClick={() => {
             if (step === 1 || (isEdit && step === 2)) onClose();
-            else setStep((s) => (s - 1) as 1 | 2 | 3);
+            else dispatch(back());
           }}
         >
           {step === 1 || (isEdit && step === 2) ? "Cancel" : "← Back"}

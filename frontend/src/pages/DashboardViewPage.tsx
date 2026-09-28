@@ -23,11 +23,14 @@ import { useDashboard, useDashboards } from "../features/dashboards";
 import { useDeleteWidget, useReorderWidgets } from "../features/widgets";
 import { useToast } from "../context/ToastContext";
 import { errorMessage } from "../lib/errors";
+import { useAppDispatch } from "../store";
+import { closeBuilder, openBuilder } from "../features/widgets/widgetBuilderSlice";
 import type { Widget } from "../types";
 
 export default function DashboardViewPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const toast = useToast();
+  const dispatch = useAppDispatch();
 
   const { data: dashboards, isLoading: listLoading } = useDashboards();
 
@@ -42,9 +45,10 @@ export default function DashboardViewPage() {
   const deleteWidget = useDeleteWidget(dashboardId ?? 0);
 
   const [order, setOrder] = useState<Widget[]>([]);
-  const [configuratorOpen, setConfiguratorOpen] = useState(false);
-  const [editingWidget, setEditingWidget] = useState<Widget | null>(null);
   const [deletingWidget, setDeletingWidget] = useState<Widget | null>(null);
+
+  // Builder state lives in Redux, so it would outlive this page; reset it on leave.
+  useEffect(() => () => void dispatch(closeBuilder()), [dispatch]);
 
   // Sync local order from the server whenever the dashboard reloads.
   useEffect(() => {
@@ -122,7 +126,7 @@ export default function DashboardViewPage() {
                 ))}
               </Select>
             )}
-            <Button onClick={() => setConfiguratorOpen(true)}>+ Add Widget</Button>
+            <Button onClick={() => dispatch(openBuilder())}>+ Add Widget</Button>
           </div>
         }
       />
@@ -134,7 +138,7 @@ export default function DashboardViewPage() {
         <EmptyState
           title="No widgets yet"
           description="Add your first widget to start visualizing a metric."
-          action={<Button onClick={() => setConfiguratorOpen(true)}>+ Add Widget</Button>}
+          action={<Button onClick={() => dispatch(openBuilder())}>+ Add Widget</Button>}
         />
       )}
 
@@ -143,19 +147,11 @@ export default function DashboardViewPage() {
           <SortableContext items={order.map((w) => w.id)} strategy={rectSortingStrategy}>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {order.map((widget) => (
-                <WidgetCard
-                  key={widget.id}
-                  widget={widget}
-                  onEdit={(w) => {
-                    setEditingWidget(w);
-                    setConfiguratorOpen(true);
-                  }}
-                  onDelete={(w) => setDeletingWidget(w)}
-                />
+                <WidgetCard key={widget.id} widget={widget} onDelete={(w) => setDeletingWidget(w)} />
               ))}
               <button
                 type="button"
-                onClick={() => setConfiguratorOpen(true)}
+                onClick={() => dispatch(openBuilder())}
                 className="flex min-h-[14rem] flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-white/50 text-gray-500 transition hover:border-brand-400 hover:text-brand-600"
               >
                 <span className="text-2xl">+</span>
@@ -167,17 +163,7 @@ export default function DashboardViewPage() {
         </DndContext>
       )}
 
-      {dashboardId && (
-        <WidgetConfigurator
-          open={configuratorOpen}
-          dashboardId={dashboardId}
-          widget={editingWidget}
-          onClose={() => {
-            setConfiguratorOpen(false);
-            setEditingWidget(null);
-          }}
-        />
-      )}
+      {dashboardId && <WidgetConfigurator dashboardId={dashboardId} />}
 
       <ConfirmDialog
         open={!!deletingWidget}
