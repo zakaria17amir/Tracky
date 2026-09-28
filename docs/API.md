@@ -1,7 +1,7 @@
 # API reference
 
-Complete reference for the Tracky REST API — every endpoint, its parameters, payloads and status
-codes.
+Complete reference for the Tracky API — every REST endpoint, its parameters, payloads and status
+codes, plus the GraphQL endpoint that feeds the dashboard view.
 
 **Base URL:** `http://127.0.0.1:8000/api` in development.
 **Content type:** `application/json` for requests and responses.
@@ -16,6 +16,7 @@ codes.
 - [Entries](#entries)
 - [Dashboards](#dashboards)
 - [Widgets](#widgets)
+- [GraphQL](#graphql)
 - [Admin](#admin)
 - [Errors](#errors)
 - [Rate limits](#rate-limits)
@@ -411,6 +412,66 @@ request is rejected and no positions change.
 Read is owner or admin; write and delete are owner only. `PATCH` accepts `chart_type` and `config`
 — a widget cannot be moved to a different dashboard or rebound to a different metric. `DELETE`
 returns **`204`**.
+
+---
+
+## GraphQL
+
+### `POST /api/graphql`
+
+One query, built for the dashboard screen. Rendering a dashboard over REST takes one request for the
+dashboard plus an entries or summary request **per widget**; this query returns all of it in one
+round trip. Served by [Lighthouse](https://lighthouse-php.com); the schema lives in
+`backend/graphql/schema.graphql`.
+
+Same authentication as REST: a request without a valid Bearer token gets **`401`** before any
+GraphQL runs. Authorization reuses `DashboardPolicy@view` — owner or admin. A foreign dashboard
+returns `200` with `data.dashboard: null` and an `errors` entry (`"This action is unauthorized."`), as
+GraphQL reports field errors in the body.
+
+```graphql
+query Dashboard($id: ID!) {
+  dashboard(id: $id) {
+    id
+    name
+    widgets {                       # ordered by position
+      id
+      chart_type
+      position
+      config                        # JSON scalar, same keys as REST
+      metric { id name type unit scale_min scale_max }
+      entries(days: 90) { logged_date value }       # oldest first, booleans as 1/0
+      summary(threshold: 1) { current current_date average yesterday last_week streak }
+    }
+  }
+}
+```
+
+```json
+{
+  "data": {
+    "dashboard": {
+      "id": "1",
+      "name": "My Health",
+      "widgets": [
+        {
+          "id": "1",
+          "chart_type": "line",
+          "position": 0,
+          "config": { "range_days": 14, "show_points": true, "color": "#6366f1" },
+          "metric": { "id": "1", "name": "Sleep Hours", "type": "numeric", "unit": "hours", "scale_min": null, "scale_max": null },
+          "entries": [{ "logged_date": "2026-09-27", "value": 7.5 }],
+          "summary": { "current": 7.5, "current_date": "2026-09-27", "average": 7.1, "yesterday": 7.5, "last_week": 6.5, "streak": 21 }
+        }
+      ]
+    }
+  }
+}
+```
+
+`entries` and `summary` are computed per widget (`MetricSummary` is reused, so the numbers match
+`GET /api/metrics/{id}/summary`); metrics are eager-loaded, so a dashboard costs three queries plus two
+per widget. The REST endpoints remain for every other screen and for writes.
 
 ---
 

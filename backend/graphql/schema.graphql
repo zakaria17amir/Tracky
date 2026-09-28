@@ -1,0 +1,50 @@
+"Arbitrary JSON value (widget config)."
+scalar JSON
+
+type Query {
+  "A dashboard with everything its widgets need to render. Owner or admin only."
+  dashboard(id: ID!): Dashboard
+}
+
+type Dashboard {
+  id: ID!
+  name: String!
+  description: String
+  widgets: [Widget!]!
+}
+
+type Widget {
+  id: ID!
+  chart_type: String!
+  position: Int!
+  config: JSON
+  metric: Metric!
+  "Entries logged in the last `days` days, oldest first. Booleans are 1/0."
+  entries(days: Int = 90): [Point!]! @field(resolver: "App\\GraphQL\\WidgetFields@entries")
+  "Stat and streak figures over the metric's full history."
+  summary(threshold: Float = 1): Summary! @field(resolver: "App\\GraphQL\\WidgetFields@summary")
+}
+
+type Metric {
+  id: ID!
+  name: String!
+  type: String!
+  unit: String
+  scale_min: Int
+  scale_max: Int
+}
+
+type Point {
+  logged_date: String!
+  value: Float!
+}
+
+type Summary {
+  "Latest value; booleans are 1/0."
+  current: Float
+  current_date: String
+  average: Float
+  yesterday: Float
+  last_week: Float
+  streak: Int!
+}

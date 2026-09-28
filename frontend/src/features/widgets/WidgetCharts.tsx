@@ -9,18 +9,21 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import type { Entry, Metric, MetricSummaryData, WidgetConfig } from "../../types";
-import { CHART_COLORS, toChartSeries } from "../../lib/widgetData";
+import type { Metric, MetricSummaryData, WidgetConfig } from "../../types";
+import type { Point } from "../dashboardGraph";
+import { CHART_COLORS, pointsToSeries } from "../../lib/widgetData";
+
+type ChartMetric = Pick<Metric, "name" | "type" | "unit">;
 
 interface ChartProps {
-  entries: Entry[];
-  metric: Metric;
+  points: Point[];
+  metric: ChartMetric;
   config: WidgetConfig;
 }
 
 interface SummaryProps {
   summary: MetricSummaryData;
-  metric: Metric;
+  metric: ChartMetric;
   config: WidgetConfig;
 }
 
@@ -32,8 +35,8 @@ function NoData() {
   );
 }
 
-export function LineWidget({ entries, metric, config }: ChartProps) {
-  const data = toChartSeries(entries, config.range_days);
+export function LineWidget({ points, metric, config }: ChartProps) {
+  const data = pointsToSeries(points, config.range_days);
   if (data.length === 0) return <NoData />;
   const color = config.color ?? CHART_COLORS[0];
   return (
@@ -57,8 +60,8 @@ export function LineWidget({ entries, metric, config }: ChartProps) {
   );
 }
 
-export function BarWidget({ entries, metric, config }: ChartProps) {
-  const data = toChartSeries(entries, config.range_days ?? 14);
+export function BarWidget({ points, metric, config }: ChartProps) {
+  const data = pointsToSeries(points, config.range_days ?? 14);
   if (data.length === 0) return <NoData />;
   const color = config.color ?? CHART_COLORS[1];
   return (

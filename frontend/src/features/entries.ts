@@ -3,7 +3,6 @@ import api from "../lib/api";
 import type {
   Entry,
   EntryValue,
-  MetricSummaryData,
   Paginated,
   ResourceCollection,
   ResourceItem,
@@ -26,7 +25,6 @@ export interface BulkEntryRow {
 export const entryKeys = {
   all: ["entries"] as const,
   list: (filters: EntryFilters) => ["entries", filters] as const,
-  metricEntries: (metricId: number) => ["metric-entries", metricId] as const,
 };
 
 export function useEntries(filters: EntryFilters = {}) {
@@ -40,39 +38,11 @@ export function useEntries(filters: EntryFilters = {}) {
   });
 }
 
-/** Chart data source for a single metric. */
-export function useMetricEntries(metricId: number, params: { from?: string; to?: string } = {}) {
-  return useQuery({
-    queryKey: [...entryKeys.metricEntries(metricId), params],
-    queryFn: async () => {
-      const { data } = await api.get<Paginated<Entry>>(`/metrics/${metricId}/entries`, {
-        params: { ...params, per_page: 100 },
-      });
-      return data.data;
-    },
-    staleTime: 0,
-  });
-}
-
-/** Server-computed stat + streak over a metric's full history. */
-export function useMetricSummary(metricId: number, threshold = 1) {
-  return useQuery({
-    queryKey: ["metric-summary", metricId, threshold],
-    queryFn: async () => {
-      const { data } = await api.get<MetricSummaryData>(`/metrics/${metricId}/summary`, {
-        params: { threshold },
-      });
-      return data;
-    },
-    staleTime: 0,
-  });
-}
-
 function invalidateEntries(qc: ReturnType<typeof useQueryClient>) {
   qc.invalidateQueries({ queryKey: entryKeys.all });
-  qc.invalidateQueries({ queryKey: ["metric-entries"] });
-  qc.invalidateQueries({ queryKey: ["metric-summary"] });
   qc.invalidateQueries({ queryKey: ["metrics"] });
+  // Dashboard views embed entries and summaries through GraphQL.
+  qc.invalidateQueries({ queryKey: ["dashboards"] });
 }
 
 export function useUpsertEntry() {

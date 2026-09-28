@@ -42,4 +42,30 @@ describe("Dashboards and widgets", () => {
     cy.get('[data-testid="widget-card"]').should("have.length.at.least", 1);
     cy.contains('[data-testid="widget-card"]', "Steps").should("be.visible");
   });
+
+  it("loads the whole dashboard body in one GraphQL request", () => {
+    cy.intercept("POST", "/api/graphql").as("graph");
+    cy.intercept("GET", "/api/metrics/*/entries*").as("perWidgetEntries");
+
+    cy.window().then((win) => {
+      const headers = { Authorization: `Bearer ${win.localStorage.getItem("tracky_token")}`, Accept: "application/json" };
+      cy.request({ method: "POST", url: "/api/metrics", headers, body: { name: "Water", type: "numeric", unit: "l" } })
+        .its("body.data.id")
+        .then((metricId) =>
+          cy
+            .request({ method: "POST", url: "/api/dashboards", headers, body: { name: "Hydration" } })
+            .its("body.data.id")
+            .then((dashboardId) => {
+              for (const chart_type of ["line", "stat"]) {
+                cy.request({ method: "POST", url: `/api/dashboards/${dashboardId}/widgets`, headers, body: { metric_id: metricId, chart_type } });
+              }
+              cy.visit(`/?d=${dashboardId}`);
+            }),
+        );
+    });
+
+    cy.get('[data-testid="widget-card"]').should("have.length", 2);
+    cy.get("@graph.all").should("have.length", 1);
+    cy.get("@perWidgetEntries.all").should("have.length", 0);
+  });
 });

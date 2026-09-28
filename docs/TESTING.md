@@ -122,6 +122,17 @@ The widget tests cover the subtlest hole in the model: a widget references *two*
 authorizing the dashboard alone would let a user render someone else's metric on their own page.
 Both parents are checked.
 
+### `GraphQLDashboardTest` — the dashboard query
+
+| Test | Asserts |
+| --- | --- |
+| `owner_gets_widgets_with_metric_entries_and_summary_in_one_request` | Position order, JSON config, metric, 90-day entry window, summary maths |
+| `user_cannot_query_another_users_dashboard` | `data.dashboard` is null and an unauthorized error is returned |
+| `guest_is_rejected` | No token means `401` before GraphQL runs |
+| `admin_can_query_another_users_dashboard` | The admin read path holds over GraphQL too |
+| `repeating_a_query_works_on_a_serializing_cache_store` | A second identical query succeeds on a file cache — guards the Laravel 13 unserialize restriction |
+| `metrics_are_eager_loaded_so_queries_grow_only_with_per_widget_data` | Query count stays within 3 + 2 per widget — an N+1 on metrics fails it |
+
 ### `AdminTest` — the role boundary
 
 | Test | Asserts |
@@ -149,11 +160,15 @@ components. Test files sit next to the code they cover (`*.test.ts` / `*.test.ts
   them. Data hooks are mocked at the module boundary (`vi.mock("../entries")`) so a test controls
   loading, empty and populated states directly.
 
-**`lib/widgetData.test.ts`** — value mapping per metric type, series sorting, day-window filtering,
-default widget config.
+**`lib/widgetData.test.ts`** — series sorting, labels and day-window filtering, default widget
+config.
 
-**`features/widgets/WidgetCard.test.tsx`** — loading spinner, stat card value and comparison, empty
-state for a chart with no entries.
+**`features/dashboardGraph.test.ts`** — mapping the GraphQL response (string ids to numbers, 1/0
+back to booleans for boolean metrics, null or PHP `[]` config), the request variables, and GraphQL `errors`
+surfacing as a thrown error.
+
+**`features/widgets/WidgetCard.test.tsx`** — stat and streak cards from the embedded summary, empty
+state for a chart with no points, and the edit button opening the builder for that widget.
 
 **`features/widgets/widgetBuilderSlice.test.ts`** — every builder transition as a pure reducer:
 open for new vs. edit, metric selection, chart choice resetting config, back never below step one,
@@ -179,6 +194,7 @@ one walks a complete journey rather than asserting an isolated component.
 
 **`dashboard-widgets.cy.ts`**
 - creates a dashboard, then adds a widget through the full three-step configurator
+- loads a two-widget dashboard with exactly one GraphQL request and no per-widget entry requests
 
 Each spec registers its own account, so specs are independent and do not depend on the seeder or on
 each other's leftovers.
@@ -229,6 +245,6 @@ Factories exist for every model (`UserFactory`, `MetricFactory`, `EntryFactory`,
 
 | Suite | Count | Scope |
 | --- | --- | --- |
-| PHPUnit feature | 50 tests, 121 assertions | API contract, auth, ownership, cascades, validation |
-| Vitest + RTL | 19 tests | Chart data shaping, builder reducer, widget and configurator rendering |
-| Cypress E2E | 3 specs, 7 journeys | Registration, login, metric CRUD, logging, widget creation |
+| PHPUnit feature | 56 tests, 145 assertions | REST and GraphQL contract, auth, ownership, cascades, validation |
+| Vitest + RTL | 23 tests | Chart data shaping, GraphQL mapping, builder reducer, widget and configurator rendering |
+| Cypress E2E | 3 specs, 8 journeys | Registration, login, metric CRUD, logging, widget creation |

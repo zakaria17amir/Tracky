@@ -12,7 +12,7 @@ and build dashboards out of configurable chart widgets.
 [![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Tests](https://img.shields.io/badge/tests-69%20passing-brightgreen)](#testing)
+[![Tests](https://img.shields.io/badge/tests-79%20passing-brightgreen)](#testing)
 
 <img src="docs/screenshots/dashboard.png" alt="Tracky dashboard showing line, bar, stat and streak widgets" width="100%">
 
@@ -44,10 +44,11 @@ safe to expose even though the SPA is currently its only client.
 | **Composable dashboards** | Drop line / bar / stat / streak widgets onto named dashboards; each widget is configured independently. |
 | **Drag-and-drop reordering** | Optimistic reorder with automatic rollback when the server rejects it (dnd-kit). |
 | **Defense in depth** | Middleware → policies → query scoping. Frontend route guards are UX only and never load-bearing. |
+| **One-request dashboards** | The dashboard view loads every widget's metric, chart points and summary in a single GraphQL query instead of one REST call per widget. |
 | **Bulk "Quick Log"** | Log every active metric for a day in a single request, upserting on `(metric_id, logged_date)`. |
 | **Admin oversight** | A role-gated and deliberately **read-only** admin view — admins manage accounts, never someone's data. |
 | **Fully responsive** | The desktop sidebar collapses into a mobile tab bar; tables reflow into stacked cards. |
-| **Tested at every layer** | 50 PHPUnit feature tests over the API contract, Vitest + React Testing Library for reducers and components, and Cypress specs driving the real UI. |
+| **Tested at every layer** | 56 PHPUnit feature tests over the REST and GraphQL contract, Vitest + React Testing Library for reducers and components, and Cypress specs driving the real UI. |
 
 ## Screenshots
 
@@ -86,7 +87,7 @@ safe to expose even though the SPA is currently its only client.
 
 ## Tech stack
 
-**Backend** — Laravel 13 · PHP 8.4+ · SQLite · Laravel Sanctum (Bearer tokens) · Laravel Breeze ·
+**Backend** — Laravel 13 · PHP 8.4+ · SQLite · Laravel Sanctum (Bearer tokens) · Lighthouse (GraphQL) · Laravel Breeze ·
 Eloquent policies · PHPUnit · Pint
 
 **Frontend** — React 19 · TypeScript (strict) · Vite · React Router 7 · TanStack Query · Redux Toolkit ·
@@ -107,19 +108,22 @@ flowchart LR
         UI --> RQ --> AX
     end
 
-    subgraph API["Laravel 13 REST API"]
+    subgraph API["Laravel 13 REST + GraphQL API"]
         MW["auth:sanctum / admin<br/>middleware"]
+        GQ["Lighthouse<br/>dashboard query"]
         CT["Controllers<br/>+ FormRequests"]
         PO["Policies<br/>owner or admin"]
         SV["Services<br/>MetricSummary, EntryWriter"]
         RS["JSON Resources"]
         MW --> CT --> PO
         CT --> SV --> RS
+        MW --> GQ --> PO
+        GQ --> SV
     end
 
     DB[("SQLite<br/>users · metrics · entries<br/>dashboards · widgets")]
 
-    AX -- "Authorization: Bearer" --> MW
+    AX -- "Authorization: Bearer<br/>REST + POST /api/graphql" --> MW
     RS -- "JSON" --> AX
     SV --> DB
 ```
@@ -258,10 +262,12 @@ Tracky/
 │   │   │   ├── Middleware/      EnsureUserIsAdmin
 │   │   │   ├── Requests/        FormRequest validation per action
 │   │   │   └── Resources/       JSON serialization contract
+│   │   ├── GraphQL/             Lighthouse resolvers and JSON scalar
 │   │   ├── Models/              User, Metric, Entry, Dashboard, Widget
 │   │   ├── Policies/            per-model authorization
 │   │   └── Services/            MetricSummary, EntryWriter
 │   ├── database/                migrations, factories, seeder
+│   ├── graphql/                 schema.graphql
 │   ├── routes/                  api.php, auth.php
 │   └── tests/Feature/           API test suite
 ├── frontend/                  React 19 + TypeScript SPA
@@ -291,6 +297,7 @@ All routes are prefixed `/api` and return JSON. Authentication is a Sanctum Bear
 | **Dashboards** | `GET\|POST /dashboards` · `GET\|PATCH\|DELETE /dashboards/{id}` |
 | **Widgets** | `GET\|POST /dashboards/{id}/widgets` · `PATCH /dashboards/{id}/widgets/reorder` · `GET\|PATCH\|DELETE /widgets/{id}` |
 | **Admin** | `GET /admin/users` · `GET\|PATCH\|DELETE /admin/users/{id}` |
+| **GraphQL** | `POST /graphql` — `dashboard(id)` with widgets, metrics, entries and summaries |
 
 Request and response shapes, validation rules, error formats and rate limits are documented in
 [`docs/API.md`](docs/API.md).

@@ -1,12 +1,4 @@
-import type { Entry, WidgetConfig } from "../types";
-
-/** Numeric value of an entry for charting (booleans → 1/0). */
-export function numericValue(entry: Entry): number {
-  if (entry.value_boolean !== null) return entry.value_boolean ? 1 : 0;
-  if (entry.value_scale !== null) return entry.value_scale;
-  if (entry.value_numeric !== null) return Number(entry.value_numeric);
-  return 0;
-}
+import type { WidgetConfig } from "../types";
 
 export interface ChartPoint {
   date: string;
@@ -14,21 +6,21 @@ export interface ChartPoint {
   value: number;
 }
 
-/** Entries → ascending {date,label,value} points within an optional day window. */
-export function toChartSeries(entries: Entry[], rangeDays?: number): ChartPoint[] {
-  let rows = [...entries].sort((a, b) => a.logged_date.localeCompare(b.logged_date));
+/** {logged_date,value} points → ascending {date,label,value} within an optional day window. */
+export function pointsToSeries(points: { logged_date: string; value: number }[], rangeDays?: number): ChartPoint[] {
+  let rows = [...points].sort((a, b) => a.logged_date.localeCompare(b.logged_date));
   if (rangeDays) {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - rangeDays);
-    rows = rows.filter((e) => new Date(e.logged_date + "T00:00:00") >= cutoff);
+    rows = rows.filter((p) => new Date(p.logged_date + "T00:00:00") >= cutoff);
   }
-  return rows.map((e) => ({
-    date: e.logged_date,
-    label: new Date(e.logged_date + "T00:00:00").toLocaleDateString(undefined, {
+  return rows.map((p) => ({
+    date: p.logged_date,
+    label: new Date(p.logged_date + "T00:00:00").toLocaleDateString(undefined, {
       month: "short",
       day: "numeric",
     }),
-    value: numericValue(e),
+    value: p.value,
   }));
 }
 

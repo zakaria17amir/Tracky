@@ -96,7 +96,7 @@ class MetricSummary
         return $streak;
     }
 
-    private function numericValue(Entry $entry): float
+    public function numericValue(Entry $entry): float
     {
         if ($entry->value_boolean !== null) {
             return $entry->value_boolean ? 1.0 : 0.0;

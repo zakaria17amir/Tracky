@@ -226,6 +226,21 @@ anything, and any component opens the builder with `dispatch(openBuilder(widget)
 only IDs and draft config — never metrics or widgets fetched from the API — so it cannot drift from
 the server.
 
+### One GraphQL query per dashboard
+
+The dashboard view is the one screen that needs data from every resource at once: the dashboard,
+its ordered widgets, each widget's metric, recent entries and summary figures. Over REST that was
+one request for the dashboard and another per widget, fired as each card mounted. It is now a single
+`dashboard(id)` GraphQL query (`features/dashboardGraph.ts`).
+
+No GraphQL client library is involved. The query is a string posted through the same axios
+instance — so the Bearer token and 401 handling come for free — and the result is cached by TanStack
+Query under `["dashboards", id, "graph"]`. Nesting it under the dashboard key means the existing
+widget mutations, which invalidate `["dashboards", id]`, refresh it without knowing it exists; entry
+writes invalidate `["dashboards"]` for the same reason. On the server, Lighthouse reuses the
+existing `DashboardPolicy` and `MetricSummary`, so GraphQL adds a transport, not a second set of
+rules. Writes stay on REST.
+
 ### Optimistic updates
 
 Widget reordering is optimistic, which is where drag-and-drop earns its keep:
@@ -327,8 +342,6 @@ Honest notes on where this stops, and what would change first at scale.
 
 - **No refresh-token rotation.** Tokens are long-lived until logout. Short-lived access tokens with
   refresh would be the next hardening step.
-- **Chart data is fetched per widget.** A dashboard with many widgets issues one request each. A
-  batched endpoint would help once dashboards grow past a handful of widgets.
 - **No caching layer.** `MetricSummary` recomputes on every request. It is a single indexed scan over
   one user's entries, which is fine at personal scale and would want memoization at a larger one.
 - **SQLite serializes writes.** Correct for single-user workloads, not for concurrent multi-tenant

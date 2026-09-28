@@ -11,6 +11,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Vitest + React Testing Library suite for the SPA, run in CI
 - Redux Toolkit store holding the widget builder's UI state; server state stays in TanStack Query
+- `POST /api/graphql` (Lighthouse) with a `dashboard(id)` query; the dashboard view now loads in one
+  request instead of one per widget
 
 ### Changed
 

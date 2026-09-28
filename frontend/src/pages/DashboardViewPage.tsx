@@ -19,13 +19,13 @@ import { EmptyState, ErrorState, LoadingState } from "../components/ui/States";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
 import WidgetCard from "../features/widgets/WidgetCard";
 import WidgetConfigurator from "../features/widgets/WidgetConfigurator";
-import { useDashboard, useDashboards } from "../features/dashboards";
+import { useDashboards } from "../features/dashboards";
+import { useDashboardGraph, type GraphWidget } from "../features/dashboardGraph";
 import { useDeleteWidget, useReorderWidgets } from "../features/widgets";
 import { useToast } from "../context/ToastContext";
 import { errorMessage } from "../lib/errors";
 import { useAppDispatch } from "../store";
 import { closeBuilder, openBuilder } from "../features/widgets/widgetBuilderSlice";
-import type { Widget } from "../types";
 
 export default function DashboardViewPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -39,13 +39,13 @@ export default function DashboardViewPage() {
   const requestedId = searchParams.get("d") ? Number(searchParams.get("d")) : undefined;
   const dashboardId =
     requestedId ?? (dashboards && dashboards.length > 0 ? dashboards[0].id : undefined);
-  const { data: dashboard, isLoading, isError, refetch } = useDashboard(dashboardId);
+  const { data: dashboard, isLoading, isError, refetch } = useDashboardGraph(dashboardId);
 
   const reorder = useReorderWidgets(dashboardId ?? 0);
   const deleteWidget = useDeleteWidget(dashboardId ?? 0);
 
-  const [order, setOrder] = useState<Widget[]>([]);
-  const [deletingWidget, setDeletingWidget] = useState<Widget | null>(null);
+  const [order, setOrder] = useState<GraphWidget[]>([]);
+  const [deletingWidget, setDeletingWidget] = useState<GraphWidget | null>(null);
 
   // Builder state lives in Redux, so it would outlive this page; reset it on leave.
   useEffect(() => () => void dispatch(closeBuilder()), [dispatch]);
