@@ -12,7 +12,7 @@ and build dashboards out of configurable chart widgets.
 [![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Tests](https://img.shields.io/badge/tests-50%20passing-brightgreen)](#testing)
+[![Tests](https://img.shields.io/badge/tests-60%20passing-brightgreen)](#testing)
 
 <img src="docs/screenshots/dashboard.png" alt="Tracky dashboard showing line, bar, stat and streak widgets" width="100%">
 
@@ -47,7 +47,7 @@ safe to expose even though the SPA is currently its only client.
 | **Bulk "Quick Log"** | Log every active metric for a day in a single request, upserting on `(metric_id, logged_date)`. |
 | **Admin oversight** | A role-gated and deliberately **read-only** admin view — admins manage accounts, never someone's data. |
 | **Fully responsive** | The desktop sidebar collapses into a mobile tab bar; tables reflow into stacked cards. |
-| **Tested end to end** | 50 PHPUnit feature tests over the API contract, plus Cypress specs driving the real UI. |
+| **Tested at every layer** | 50 PHPUnit feature tests over the API contract, Vitest + React Testing Library for components, and Cypress specs driving the real UI. |
 
 ## Screenshots
 
@@ -90,7 +90,7 @@ safe to expose even though the SPA is currently its only client.
 Eloquent policies · PHPUnit · Pint
 
 **Frontend** — React 19 · TypeScript (strict) · Vite · React Router 7 · TanStack Query ·
-Tailwind CSS · Flowbite React · Recharts · dnd-kit · Cypress
+Tailwind CSS · Flowbite React · Recharts · dnd-kit · Vitest · React Testing Library · Cypress
 
 **Tooling** — GitHub Actions (tests, lint, type-check, build, E2E) · CodeQL · Dependabot
 
@@ -191,7 +191,7 @@ the split value columns are in [`docs/DATA-MODEL.md`](docs/DATA-MODEL.md).
 
 ## Quick start
 
-**Prerequisites:** PHP 8.4+ with `pdo_sqlite`, Composer 2, Node.js 20+.
+**Prerequisites:** PHP 8.4+ with `pdo_sqlite`, Composer 2, Node.js 22+.
 
 ```bash
 git clone https://github.com/zakaria17amir/Tracky.git
@@ -233,8 +233,8 @@ The demo user ships with four metrics, three weeks of entries, and a populated "
 # Backend — feature tests over the API contract, auth and ownership rules
 cd backend && php artisan test
 
-# Frontend — lint, strict type-check, production build
-cd frontend && npm run lint && npm run typecheck && npm run build
+# Frontend — unit/component tests, lint, strict type-check, production build
+cd frontend && npm test && npm run lint && npm run typecheck && npm run build
 
 # End-to-end — Cypress against the real stack (both servers must be running)
 cd frontend && npm run e2e

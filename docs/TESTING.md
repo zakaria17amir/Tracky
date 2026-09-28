@@ -1,7 +1,8 @@
 # Testing
 
-Two suites, each aimed at a different class of bug: **PHPUnit feature tests** assert the API
-contract and the security model, **Cypress E2E** drives the real UI against the real API.
+Three suites, each aimed at a different class of bug: **PHPUnit feature tests** assert the API
+contract and the security model, **Vitest + React Testing Library** cover the SPA's logic and
+components in isolation, and **Cypress E2E** drives the real UI against the real API.
 
 ## Running the suites
 
@@ -16,8 +17,9 @@ php artisan test --testsuite=Feature     # one suite
 vendor/bin/pint --test                   # check
 vendor/bin/pint                          # fix
 
-# Frontend — static analysis
+# Frontend — unit/component tests and static analysis
 cd frontend
+npm test                                 # Vitest, jsdom
 npm run lint
 npm run typecheck
 npm run build                            # type-check + production build
@@ -36,6 +38,8 @@ All of the above run on every push and pull request — see [the CI workflow](..
    Cypress E2E    │  Real browser → SPA → API   │   critical user journeys
                   ├─────────────────────────────┤
    PHPUnit        │  HTTP → routes → DB         │   API contract + security
+                  ├─────────────────────────────┤
+   Vitest + RTL   │  Pure logic and components  │   chart maths, render states
                   ├─────────────────────────────┤
    tsc + eslint   │  Types and code shape       │   client/server contract drift
                   └─────────────────────────────┘
@@ -134,6 +138,23 @@ Both parents are checked.
 Covers name and email updates, email uniqueness, and that a password change requires the correct
 current password — both the rejection and the success path.
 
+## Frontend unit and component tests
+
+Vitest runs in a jsdom environment configured in `vite.config.ts`, with React Testing Library for
+components. Test files sit next to the code they cover (`*.test.ts` / `*.test.tsx`).
+
+- **Pure logic first.** Chart data shaping (`lib/widgetData.ts`) is plain functions, tested without
+  rendering anything. Time-dependent code uses `vi.setSystemTime` so results don't drift by date.
+- **Components through the DOM.** Components are queried by role and text, as a user would find
+  them. Data hooks are mocked at the module boundary (`vi.mock("../entries")`) so a test controls
+  loading, empty and populated states directly.
+
+**`lib/widgetData.test.ts`** — value mapping per metric type, series sorting, day-window filtering,
+default widget config.
+
+**`features/widgets/WidgetCard.test.tsx`** — loading spinner, stat card value and comparison, empty
+state for a chart with no entries.
+
 ## Frontend E2E
 
 Cypress specs drive a real browser against both running servers. They are kept few and broad: each
@@ -202,7 +223,5 @@ Factories exist for every model (`UserFactory`, `MetricFactory`, `EntryFactory`,
 | Suite | Count | Scope |
 | --- | --- | --- |
 | PHPUnit feature | 50 tests, 121 assertions | API contract, auth, ownership, cascades, validation |
+| Vitest + RTL | 10 tests | Chart data shaping, widget render states |
 | Cypress E2E | 3 specs, 7 journeys | Registration, login, metric CRUD, logging, widget creation |
-
-Component-level unit tests for the React tree are the main gap. The E2E specs cover the critical
-paths, but a broken edge case inside a single widget renderer would not be caught today.

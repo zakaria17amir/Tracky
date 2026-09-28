@@ -7,6 +7,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Vitest + React Testing Library suite for the SPA, run in CI
+
+### Changed
+
+- CI frontend matrix moved to Node 22 and 24 (Node 20 reached end of life)
+
 Planned, in rough priority order:
 
 - CSV / JSON export of entries
@@ -14,7 +22,6 @@ Planned, in rough priority order:
 - Reminders for metrics left unlogged
 - Shareable read-only dashboard links
 - Postgres as the default driver, with a Docker Compose setup
-- Component-level tests for the React tree
 
 ## [1.0.0] — 2026-09-21
 
