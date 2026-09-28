@@ -15,7 +15,7 @@ class StoreWidgetRequest extends FormRequest
     {
         return [
             'metric_id' => ['required', 'integer', 'exists:metrics,id'],
-            'chart_type' => ['required', 'in:line,bar,stat,streak'],
+            'chart_type' => ['required', 'in:line,bar,stat,streak,heatmap'],
             'config' => ['nullable', 'array'],
             'position' => ['nullable', 'integer', 'min:0'],
         ];

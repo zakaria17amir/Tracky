@@ -363,7 +363,7 @@ Widgets for a dashboard in `position` order, each with its `metric`. Owner or ad
 | Field | Rules |
 | --- | --- |
 | `metric_id` | required, integer, must exist and be owned by the caller |
-| `chart_type` | required, one of `line`, `bar`, `stat`, `streak` |
+| `chart_type` | required, one of `line`, `bar`, `stat`, `streak`, `heatmap`; boolean metrics accept only `stat`, `streak` and `heatmap` |
 | `config` | nullable, object — see [config keys](#config-keys) |
 | `position` | nullable, integer ≥ 0; appended to the end when omitted |
 
@@ -382,9 +382,9 @@ are ignored.
 
 | Key | Type | Applies to | Meaning |
 | --- | --- | --- | --- |
-| `range_days` | `7 \| 14 \| 30 \| 90` | line, bar | Days of history to plot |
+| `range_days` | `7 \| 14 \| 30 \| 90` | line, bar, heatmap | Days of history to plot |
 | `show_points` | boolean | line | Render point markers |
-| `color` | hex string | line, bar | Series color |
+| `color` | hex string | line, bar, heatmap | Series color (heatmap: darkest shade) |
 | `grouping` | `daily \| weekly \| monthly` | bar | Bucket size |
 | `comparison` | `average \| yesterday \| last_week` | stat | What the delta compares against |
 | `threshold_type` | `boolean \| numeric` | streak | How a day qualifies |

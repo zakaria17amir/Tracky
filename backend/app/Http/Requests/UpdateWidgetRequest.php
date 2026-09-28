@@ -18,7 +18,7 @@ class UpdateWidgetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'chart_type' => ['sometimes', 'required', 'in:line,bar,stat,streak'],
+            'chart_type' => ['sometimes', 'required', 'in:line,bar,stat,streak,heatmap'],
             'config' => ['sometimes', 'array'],
         ];
     }

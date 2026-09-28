@@ -20,7 +20,7 @@ class WidgetController extends Controller
     /**
      * Boolean metrics only support these chart types.
      */
-    private const BOOLEAN_CHART_TYPES = ['stat', 'streak'];
+    private const BOOLEAN_CHART_TYPES = ['stat', 'streak', 'heatmap'];
 
     /**
      * List a dashboard's widgets, ordered by position.
@@ -132,7 +132,7 @@ class WidgetController extends Controller
     {
         if ($metric->type === 'boolean' && ! in_array($chartType, self::BOOLEAN_CHART_TYPES, true)) {
             throw ValidationException::withMessages([
-                'chart_type' => 'Boolean metrics support only the Stat Card and Streak chart types.',
+                'chart_type' => 'Boolean metrics support only the Stat Card, Streak and Heatmap chart types.',
             ]);
         }
     }

@@ -41,11 +41,12 @@ const ALL_CHARTS: ChartOption[] = [
   { type: "bar", title: "Bar Chart", desc: "Compare periods" },
   { type: "stat", title: "Stat Card", desc: "Single value" },
   { type: "streak", title: "Streak", desc: "Consecutive days" },
+  { type: "heatmap", title: "Heatmap", desc: "Daily intensity" },
 ];
 
 function allowedCharts(metric: Metric | undefined): ChartOption[] {
   if (metric?.type === "boolean") {
-    return ALL_CHARTS.filter((c) => c.type === "stat" || c.type === "streak");
+    return ALL_CHARTS.filter((c) => c.type === "stat" || c.type === "streak" || c.type === "heatmap");
   }
   return ALL_CHARTS;
 }
@@ -213,6 +214,13 @@ export default function WidgetConfigurator({ dashboardId }: WidgetConfiguratorPr
                     <option value="monthly">Monthly</option>
                   </Select>
                 </div>
+                <ColorPicker value={config.color} onChange={(c) => setCfg("color", c)} />
+              </div>
+            )}
+
+            {chartType === "heatmap" && (
+              <div className="flex flex-col gap-4">
+                <RangeSelect value={config.range_days ?? 90} onChange={(v) => setCfg("range_days", v)} />
                 <ColorPicker value={config.color} onChange={(c) => setCfg("color", c)} />
               </div>
             )}

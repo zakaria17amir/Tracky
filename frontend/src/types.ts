@@ -2,7 +2,7 @@
 
 export type Role = "user" | "admin";
 export type MetricType = "numeric" | "scale" | "boolean";
-export type ChartType = "line" | "bar" | "stat" | "streak";
+export type ChartType = "line" | "bar" | "stat" | "streak" | "heatmap";
 
 export interface User {
   id: number;

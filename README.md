@@ -12,7 +12,7 @@ and build dashboards out of configurable chart widgets.
 [![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Tests](https://img.shields.io/badge/tests-79%20passing-brightgreen)](#testing)
+[![Tests](https://img.shields.io/badge/tests-90%20passing-brightgreen)](#testing)
 
 <img src="docs/screenshots/dashboard.png" alt="Tracky dashboard showing line, bar, stat and streak widgets" width="100%">
 
@@ -41,14 +41,15 @@ safe to expose even though the SPA is currently its only client.
 | | |
 |---|---|
 | **Type-driven metrics** | One `type` column changes the log input, the available chart types, and the summary maths. |
-| **Composable dashboards** | Drop line / bar / stat / streak widgets onto named dashboards; each widget is configured independently. |
+| **Composable dashboards** | Drop line / bar / stat / streak / heatmap widgets onto named dashboards; each widget is configured independently. |
+| **D3 calendar heatmap** | A GitHub-style grid of the last 7–90 days, one square per day shaded by value. D3 computes the scales and dates; React renders the SVG. |
 | **Drag-and-drop reordering** | Optimistic reorder with automatic rollback when the server rejects it (dnd-kit). |
 | **Defense in depth** | Middleware → policies → query scoping. Frontend route guards are UX only and never load-bearing. |
 | **One-request dashboards** | The dashboard view loads every widget's metric, chart points and summary in a single GraphQL query instead of one REST call per widget. |
 | **Bulk "Quick Log"** | Log every active metric for a day in a single request, upserting on `(metric_id, logged_date)`. |
 | **Admin oversight** | A role-gated and deliberately **read-only** admin view — admins manage accounts, never someone's data. |
 | **Fully responsive** | The desktop sidebar collapses into a mobile tab bar; tables reflow into stacked cards. |
-| **Tested at every layer** | 56 PHPUnit feature tests over the REST and GraphQL contract, Vitest + React Testing Library for reducers and components, and Cypress specs driving the real UI. |
+| **Tested at every layer** | 58 PHPUnit feature tests over the REST and GraphQL contract, Vitest + React Testing Library for reducers and components, and Cypress specs driving the real UI. |
 
 ## Screenshots
 
@@ -83,6 +84,12 @@ safe to expose even though the SPA is currently its only client.
 <p align="center"><em>Mobile — sidebar becomes a tab bar</em></p>
 </td>
 </tr>
+<tr>
+<td colspan="2">
+<img src="docs/screenshots/heatmap.png" alt="Dashboard with a D3 calendar heatmap widget">
+<p align="center"><em>Heatmap — 90 days of a metric at a glance (D3 + SVG)</em></p>
+</td>
+</tr>
 </table>
 
 ## Tech stack
@@ -91,7 +98,7 @@ safe to expose even though the SPA is currently its only client.
 Eloquent policies · PHPUnit · Pint
 
 **Frontend** — React 19 · TypeScript (strict) · Vite · React Router 7 · TanStack Query · Redux Toolkit ·
-Tailwind CSS · Flowbite React · Recharts · dnd-kit · Vitest · React Testing Library · Cypress
+Tailwind CSS · Flowbite React · Recharts · D3 (d3-scale, d3-time) · dnd-kit · Vitest · React Testing Library · Cypress
 
 **Tooling** — GitHub Actions (tests, lint, type-check, build, E2E) · CodeQL · Dependabot
 
@@ -185,7 +192,7 @@ erDiagram
         bigint id PK
         bigint dashboard_id FK
         bigint metric_id FK
-        enum chart_type "line|bar|stat|streak"
+        enum chart_type "line|bar|stat|streak|heatmap"
         int position
         json config
     }

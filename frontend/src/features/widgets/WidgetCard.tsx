@@ -1,6 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { EntryChart, StatWidget, StreakWidget } from "./WidgetCharts";
+import HeatmapWidget from "./HeatmapWidget";
 import { useAppDispatch } from "../../store";
 import { openBuilder } from "./widgetBuilderSlice";
 import type { GraphWidget } from "../dashboardGraph";
@@ -15,6 +16,7 @@ const CHART_LABEL: Record<string, string> = {
   bar: "Bar chart",
   stat: "Stat card",
   streak: "Streak",
+  heatmap: "Heatmap",
 };
 
 export default function WidgetCard({ widget, onDelete }: WidgetCardProps) {
@@ -79,6 +81,8 @@ export default function WidgetCard({ widget, onDelete }: WidgetCardProps) {
         <StatWidget summary={widget.summary} metric={metric} config={widget.config} />
       ) : widget.chart_type === "streak" ? (
         <StreakWidget summary={widget.summary} metric={metric} config={widget.config} />
+      ) : widget.chart_type === "heatmap" ? (
+        <HeatmapWidget points={widget.points} metric={metric} config={widget.config} />
       ) : (
         <EntryChart chartType={widget.chart_type} points={widget.points} metric={metric} config={widget.config} />
       )}

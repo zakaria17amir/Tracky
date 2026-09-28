@@ -55,6 +55,12 @@ describe("WidgetCard", () => {
     expect(screen.getByText(/No data yet/)).toBeInTheDocument();
   });
 
+  it("renders a heatmap widget with its chart label", () => {
+    renderCard(widget({ chart_type: "heatmap", config: { range_days: 30 } }));
+    expect(screen.getByText("Heatmap")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Heatmap of Mood over the last 30 days" })).toBeInTheDocument();
+  });
+
   it("edit opens the builder for this widget", () => {
     const store = renderCard(widget());
     screen.getByRole("button", { name: "Edit widget" }).click();

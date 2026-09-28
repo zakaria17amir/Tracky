@@ -34,6 +34,10 @@ describe("defaultConfig", () => {
     expect(defaultConfig("line")).toEqual({ range_days: 14, show_points: true, color: "#6366f1" });
   });
 
+  it("returns heatmap defaults covering 90 days", () => {
+    expect(defaultConfig("heatmap")).toEqual({ range_days: 90, color: "#6366f1" });
+  });
+
   it("returns an empty config for unknown chart types", () => {
     expect(defaultConfig("pie")).toEqual({});
   });

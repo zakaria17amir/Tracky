@@ -82,6 +82,10 @@ class DatabaseSeeder extends Seeder
             'dashboard_id' => $dashboard->id, 'metric_id' => $exercise->id, 'chart_type' => 'streak',
             'position' => 3, 'config' => ['threshold_type' => 'boolean'],
         ]);
+        Widget::create([
+            'dashboard_id' => $dashboard->id, 'metric_id' => $mood->id, 'chart_type' => 'heatmap',
+            'position' => 4, 'config' => ['range_days' => 90, 'color' => '#6366f1'],
+        ]);
     }
 
     /**

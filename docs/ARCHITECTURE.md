@@ -263,7 +263,7 @@ Metric and chart types are unions, not strings:
 
 ```ts
 export type MetricType = "numeric" | "scale" | "boolean";
-export type ChartType = "line" | "bar" | "stat" | "streak";
+export type ChartType = "line" | "bar" | "stat" | "streak" | "heatmap";
 ```
 
 Which is what makes the type-driven UI safe: a `switch` over a metric type that misses a case is a

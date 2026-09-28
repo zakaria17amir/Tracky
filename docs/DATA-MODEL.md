@@ -122,7 +122,7 @@ One chart, bound to one metric, placed on one dashboard.
 | `id` | bigint PK | |
 | `dashboard_id` | bigint FK → `dashboards` | Cascade delete |
 | `metric_id` | bigint FK → `metrics` | Cascade delete |
-| `chart_type` | enum | `line` \| `bar` \| `stat` \| `streak` |
+| `chart_type` | enum | `line` \| `bar` \| `stat` \| `streak` \| `heatmap` |
 | `position` | integer | Default 0 — render order within the dashboard |
 | `config` | json | Default `{}` — chart-type specific settings |
 | `created_at` / `updated_at` | timestamps | |
@@ -188,7 +188,7 @@ TypeScript interface on the client and the FormRequest rules on the server.
 | **Demo user** | `demo@tracky.test` / `password`, role `user` |
 | **Metrics** | Sleep Hours (numeric, hours), Mood (scale 1–10), Exercise (boolean), Steps (numeric) |
 | **Entries** | 21 days of history across all four metrics |
-| **Dashboard** | "My Health", with line, bar, stat and streak widgets |
+| **Dashboard** | "My Health", with line, bar, stat, streak and heatmap widgets |
 
 The seeder is idempotent — it upserts the two accounts and skips sample data when the demo user
 already has metrics, so re-running it will not duplicate anything.

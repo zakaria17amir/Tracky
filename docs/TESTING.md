@@ -109,6 +109,8 @@ succeeds, and the same admin writing to it fails.
 | `user_cannot_view_another_users_dashboard` | `403` |
 | `user_can_add_a_widget_to_their_dashboard` | Happy path |
 | `boolean_metric_rejects_incompatible_chart_type` | Type-driven chart rules are enforced **server-side** |
+| `heatmap_widget_is_accepted_for_numeric_and_boolean_metrics` | The heatmap type exists end to end and suits every metric type |
+| `unknown_chart_type_is_rejected` | `422` for a chart type the API does not know |
 | `user_cannot_add_a_widget_using_another_users_metric` | Ownership checked on the *referenced* metric, not just the dashboard |
 | `user_cannot_add_a_widget_to_another_users_dashboard` | `403` |
 | `owner_can_update_a_widget_chart_type_and_config` | Happy path |
@@ -167,15 +169,22 @@ config.
 back to booleans for boolean metrics, null or PHP `[]` config), the request variables, and GraphQL `errors`
 surfacing as a thrown error.
 
-**`features/widgets/WidgetCard.test.tsx`** — stat and streak cards from the embedded summary, empty
-state for a chart with no points, and the edit button opening the builder for that widget.
+**`lib/heatmap.test.ts`** — the heatmap grid: exactly N days ending today, Monday-first week
+columns with weekday rows, missing days as `null`, points outside the window ignored, and a `0..0`
+range (never `NaN`) when nothing is logged.
+
+**`features/widgets/HeatmapWidget.test.tsx`** — one labelled SVG cell per day, grey for days without
+an entry, shading by value.
+
+**`features/widgets/WidgetCard.test.tsx`** — stat, streak and heatmap cards from the embedded data,
+empty state for a chart with no points, and the edit button opening the builder for that widget.
 
 **`features/widgets/widgetBuilderSlice.test.ts`** — every builder transition as a pure reducer:
 open for new vs. edit, metric selection, chart choice resetting config, back never below step one,
 close resetting everything.
 
 **`features/widgets/WidgetConfigurator.test.tsx`** — the configurator against a real store: a
-boolean metric only offers Stat Card and Streak, and Back returns to the metric list.
+boolean metric only offers Stat Card, Streak and Heatmap, and Back returns to the metric list.
 
 ## Frontend E2E
 
@@ -245,6 +254,6 @@ Factories exist for every model (`UserFactory`, `MetricFactory`, `EntryFactory`,
 
 | Suite | Count | Scope |
 | --- | --- | --- |
-| PHPUnit feature | 56 tests, 145 assertions | REST and GraphQL contract, auth, ownership, cascades, validation |
-| Vitest + RTL | 23 tests | Chart data shaping, GraphQL mapping, builder reducer, widget and configurator rendering |
+| PHPUnit feature | 58 tests, 152 assertions | REST and GraphQL contract, auth, ownership, cascades, validation |
+| Vitest + RTL | 32 tests | Chart data shaping, heatmap grid, GraphQL mapping, builder reducer, widget and configurator rendering |
 | Cypress E2E | 3 specs, 8 journeys | Registration, login, metric CRUD, logging, widget creation |

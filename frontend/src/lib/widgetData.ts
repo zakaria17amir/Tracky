@@ -37,6 +37,8 @@ export function defaultConfig(chartType: string): WidgetConfig {
       return { comparison: "average" };
     case "streak":
       return { threshold_type: "boolean", threshold_value: 1 };
+    case "heatmap":
+      return { range_days: 90, color: CHART_COLORS[0] };
     default:
       return {};
   }

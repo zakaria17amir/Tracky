@@ -65,6 +65,33 @@ class DashboardWidgetTest extends TestCase
         ])->assertStatus(422)->assertJsonValidationErrors('chart_type');
     }
 
+    public function test_heatmap_widget_is_accepted_for_numeric_and_boolean_metrics(): void
+    {
+        $user = User::factory()->create();
+        $dashboard = Dashboard::factory()->create(['user_id' => $user->id]);
+
+        foreach (['numeric', 'boolean'] as $type) {
+            $metric = Metric::factory()->{$type}()->create(['user_id' => $user->id]);
+
+            $this->actingAs($user)->postJson("/api/dashboards/{$dashboard->id}/widgets", [
+                'metric_id' => $metric->id,
+                'chart_type' => 'heatmap',
+            ])->assertStatus(201)->assertJsonPath('data.chart_type', 'heatmap');
+        }
+    }
+
+    public function test_unknown_chart_type_is_rejected(): void
+    {
+        $user = User::factory()->create();
+        $dashboard = Dashboard::factory()->create(['user_id' => $user->id]);
+        $metric = Metric::factory()->create(['user_id' => $user->id]);
+
+        $this->actingAs($user)->postJson("/api/dashboards/{$dashboard->id}/widgets", [
+            'metric_id' => $metric->id,
+            'chart_type' => 'pie',
+        ])->assertStatus(422)->assertJsonValidationErrors('chart_type');
+    }
+
     public function test_user_cannot_add_a_widget_using_another_users_metric(): void
     {
         $user = User::factory()->create();

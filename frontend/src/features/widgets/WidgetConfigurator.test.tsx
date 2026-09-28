@@ -21,7 +21,7 @@ vi.mock("../widgets", () => ({
 vi.mock("../../context/ToastContext", () => ({ useToast: () => ({ success: vi.fn(), error: vi.fn() }) }));
 
 describe("WidgetConfigurator", () => {
-  it("offers only stat and streak for a boolean metric, and back returns to the metric list", async () => {
+  it("offers only stat, streak and heatmap for a boolean metric, and back returns to the metric list", async () => {
     const store = makeStore();
     render(
       <Provider store={store}>
@@ -35,6 +35,7 @@ describe("WidgetConfigurator", () => {
 
     expect(screen.getByRole("button", { name: /Stat Card/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Streak/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Heatmap/ })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Line Chart/ })).not.toBeInTheDocument();
     expect(store.getState().widgetBuilder).toMatchObject({ step: 2, metricId: 2 });
 
