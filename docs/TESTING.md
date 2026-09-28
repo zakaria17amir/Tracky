@@ -177,7 +177,8 @@ range (never `NaN`) when nothing is logged.
 an entry, shading by value.
 
 **`features/widgets/WidgetCard.test.tsx`** — stat, streak and heatmap cards from the embedded data,
-empty state for a chart with no points, and the edit button opening the builder for that widget.
+empty state for a chart with no points, the edit button opening the builder for that widget, and a
+memoisation check: re-rendering the parent with the same widget does not re-render its chart.
 
 **`features/widgets/widgetBuilderSlice.test.ts`** — every builder transition as a pure reducer:
 open for new vs. edit, metric selection, chart choice resetting config, back never below step one,
@@ -255,5 +256,5 @@ Factories exist for every model (`UserFactory`, `MetricFactory`, `EntryFactory`,
 | Suite | Count | Scope |
 | --- | --- | --- |
 | PHPUnit feature | 58 tests, 152 assertions | REST and GraphQL contract, auth, ownership, cascades, validation |
-| Vitest + RTL | 32 tests | Chart data shaping, heatmap grid, GraphQL mapping, builder reducer, widget and configurator rendering |
+| Vitest + RTL | 33 tests | Chart data shaping, heatmap grid, GraphQL mapping, builder reducer, widget and configurator rendering |
 | Cypress E2E | 3 specs, 8 journeys | Registration, login, metric CRUD, logging, widget creation |

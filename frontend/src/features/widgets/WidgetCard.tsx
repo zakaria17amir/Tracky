@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { EntryChart, StatWidget, StreakWidget } from "./WidgetCharts";
@@ -19,7 +20,7 @@ const CHART_LABEL: Record<string, string> = {
   heatmap: "Heatmap",
 };
 
-export default function WidgetCard({ widget, onDelete }: WidgetCardProps) {
+function WidgetCard({ widget, onDelete }: WidgetCardProps) {
   const dispatch = useAppDispatch();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: widget.id,
@@ -89,3 +90,7 @@ export default function WidgetCard({ widget, onDelete }: WidgetCardProps) {
     </div>
   );
 }
+
+// The page re-renders for unrelated reasons (delete dialog, toasts); memo keeps every
+// chart from re-rendering with it. Needs stable props and a stable SortableContext id list.
+export default memo(WidgetCard);

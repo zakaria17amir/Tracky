@@ -1,3 +1,4 @@
+import { lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import GuestRoute from "./components/guards/GuestRoute";
 import ProtectedRoute from "./components/guards/ProtectedRoute";
@@ -5,15 +6,18 @@ import AdminRoute from "./components/guards/AdminRoute";
 import AppLayout from "./components/layout/AppLayout";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import DashboardViewPage from "./pages/DashboardViewPage";
-import DashboardListPage from "./pages/DashboardListPage";
-import MetricsPage from "./pages/MetricsPage";
-import LogEntryPage from "./pages/LogEntryPage";
-import EntryHistoryPage from "./pages/EntryHistoryPage";
-import ProfilePage from "./pages/ProfilePage";
-import AdminPage from "./pages/AdminPage";
-import AdminUserDetailPage from "./pages/AdminUserDetailPage";
 import NotFoundPage from "./pages/NotFoundPage";
+
+// Authenticated screens load on demand, so Recharts, D3 and dnd-kit only download with the
+// dashboard, and the login screen ships without them. AppLayout provides the Suspense boundary.
+const DashboardViewPage = lazy(() => import("./pages/DashboardViewPage"));
+const DashboardListPage = lazy(() => import("./pages/DashboardListPage"));
+const MetricsPage = lazy(() => import("./pages/MetricsPage"));
+const LogEntryPage = lazy(() => import("./pages/LogEntryPage"));
+const EntryHistoryPage = lazy(() => import("./pages/EntryHistoryPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const AdminPage = lazy(() => import("./pages/AdminPage"));
+const AdminUserDetailPage = lazy(() => import("./pages/AdminUserDetailPage"));
 
 export default function App() {
   return (

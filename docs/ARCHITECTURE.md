@@ -253,6 +253,33 @@ Widget reordering is optimistic, which is where drag-and-drop earns its keep:
 
 The user sees an instant reorder, and a failure is visibly corrected rather than silently lost.
 
+### Performance
+
+| Measure | Before | After | How |
+| --- | --- | --- | --- |
+| JavaScript on first load | 906.22 kB (271.70 kB gzip), one chunk | 415.76 kB (132.31 kB gzip) | Route-level code splitting; Recharts, D3 and dnd-kit moved into the 390 kB dashboard chunk |
+| Requests to render a dashboard's widgets | 1 + one per widget | 1 | `dashboard(id)` GraphQL query |
+| Widget cards re-rendered when the page updates for an unrelated reason (delete dialog, toast) | every card | 0 | `React.memo` on `WidgetCard` with stable props and a memoised dnd-kit id list |
+
+Sizes are Vite's production build output (`npm run build`); the render count is pinned by a
+component test (`WidgetCard.test.tsx`).
+
+**Code splitting.** Every authenticated page is a `React.lazy` import, and `AppLayout` wraps the
+`<Outlet />` in a single `Suspense` boundary, so the sidebar stays on screen while a page chunk
+loads. Login, register and the 404 page stay in the entry chunk — they are what an anonymous
+visitor sees first and are tiny. The charting libraries are only imported by the dashboard's
+widget components, so they now download with that page instead of with the login screen.
+
+**Memoised widget cards.** A chart is the most expensive thing on the page to render, and the
+dashboard page re-renders for reasons that have nothing to do with any chart — opening the delete
+confirmation, a toast appearing. `WidgetCard` is wrapped in `React.memo`, and two details make that
+effective rather than decorative:
+
+- `onDelete` is the state setter itself, which React keeps stable, rather than an inline arrow.
+- The id list passed to dnd-kit's `SortableContext` is memoised. A fresh array on every render
+  changes dnd-kit's context value, which re-renders every `useSortable` card regardless of `memo` —
+  a component test demonstrates both the failure and the fix.
+
 ### The type contract
 
 `src/types.ts` mirrors the Laravel JSON Resources field for field — `Metric`, `Entry`, `Widget`,

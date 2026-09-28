@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Button } from "flowbite-react";
 import { useAuth } from "../../context/AuthContext";
 import { ADMIN_NAV_ITEM, NAV_ITEMS, type NavItem } from "./navItems";
+import { LoadingState } from "../ui/States";
 
 export default function AppLayout() {
   const { user, isAdmin, logout } = useAuth();
@@ -61,7 +63,9 @@ export default function AppLayout() {
         </header>
 
         <main className="flex-1 overflow-y-auto px-4 py-6 pb-24 md:px-8 md:pb-6">
-          <Outlet />
+          <Suspense fallback={<LoadingState label="Loading…" />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
 

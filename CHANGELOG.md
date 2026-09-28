@@ -15,6 +15,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   request instead of one per widget
 - Calendar heatmap widget type (D3 scales + React SVG), available for every metric type
 
+### Performance
+
+- Route-level code splitting: first-load JavaScript down from 906 kB to 416 kB (272 kB to 132 kB
+  gzipped); charting libraries load with the dashboard only
+- Widget cards are memoised, so dialogs and toasts no longer re-render every chart
+
 ### Changed
 
 - CI frontend matrix moved to Node 22 and 24 (Node 20 reached end of life)

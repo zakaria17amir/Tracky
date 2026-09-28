@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
@@ -6,6 +6,18 @@ import { Provider } from "react-redux";
 import WidgetCard from "./WidgetCard";
 import { makeStore } from "../../store";
 import type { GraphWidget } from "../dashboardGraph";
+
+const statRenders = vi.hoisted(() => vi.fn());
+vi.mock("./WidgetCharts", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./WidgetCharts")>();
+  return {
+    ...actual,
+    StatWidget: (props: Parameters<typeof actual.StatWidget>[0]) => {
+      statRenders();
+      return actual.StatWidget(props);
+    },
+  };
+});
 
 function widget(overrides: Partial<GraphWidget> = {}): GraphWidget {
   return {
@@ -59,6 +71,31 @@ describe("WidgetCard", () => {
     renderCard(widget({ chart_type: "heatmap", config: { range_days: 30 } }));
     expect(screen.getByText("Heatmap")).toBeInTheDocument();
     expect(screen.getByRole("img", { name: "Heatmap of Mood over the last 30 days" })).toBeInTheDocument();
+  });
+
+  it("does not re-render when its parent re-renders with the same widget", () => {
+    const w = widget();
+    const onDelete = () => {};
+    // A new items array would change dnd-kit's context and re-render every sortable,
+    // which is why the dashboard memoises its id list.
+    const ids = [w.id];
+    const store = makeStore();
+    const tree = (tick: number) => (
+      <Provider store={store}>
+        <DndContext>
+          <SortableContext items={ids}>
+            <span data-tick={tick} />
+            <WidgetCard widget={w} onDelete={onDelete} />
+          </SortableContext>
+        </DndContext>
+      </Provider>
+    );
+    const { rerender } = render(tree(0));
+    statRenders.mockClear();
+
+    rerender(tree(1));
+
+    expect(statRenders).not.toHaveBeenCalled();
   });
 
   it("edit opens the builder for this widget", () => {

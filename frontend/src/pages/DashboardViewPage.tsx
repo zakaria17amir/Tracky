@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   DndContext,
@@ -54,6 +54,9 @@ export default function DashboardViewPage() {
   useEffect(() => {
     if (dashboard?.widgets) setOrder(dashboard.widgets);
   }, [dashboard]);
+
+  // A stable id list keeps dnd-kit's context unchanged, so memoised cards skip unrelated renders.
+  const widgetIds = useMemo(() => order.map((w) => w.id), [order]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -144,10 +147,10 @@ export default function DashboardViewPage() {
 
       {dashboard && order.length > 0 && (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={order.map((w) => w.id)} strategy={rectSortingStrategy}>
+          <SortableContext items={widgetIds} strategy={rectSortingStrategy}>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {order.map((widget) => (
-                <WidgetCard key={widget.id} widget={widget} onDelete={(w) => setDeletingWidget(w)} />
+                <WidgetCard key={widget.id} widget={widget} onDelete={setDeletingWidget} />
               ))}
               <button
                 type="button"

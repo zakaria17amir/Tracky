@@ -12,7 +12,7 @@ and build dashboards out of configurable chart widgets.
 [![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Tests](https://img.shields.io/badge/tests-90%20passing-brightgreen)](#testing)
+[![Tests](https://img.shields.io/badge/tests-91%20passing-brightgreen)](#testing)
 
 <img src="docs/screenshots/dashboard.png" alt="Tracky dashboard showing line, bar, stat and streak widgets" width="100%">
 
@@ -50,6 +50,19 @@ safe to expose even though the SPA is currently its only client.
 | **Admin oversight** | A role-gated and deliberately **read-only** admin view — admins manage accounts, never someone's data. |
 | **Fully responsive** | The desktop sidebar collapses into a mobile tab bar; tables reflow into stacked cards. |
 | **Tested at every layer** | 58 PHPUnit feature tests over the REST and GraphQL contract, Vitest + React Testing Library for reducers and components, and Cypress specs driving the real UI. |
+
+## Performance
+
+| Measure | Before | After | How |
+| --- | --- | --- | --- |
+| JavaScript on first load | 906.22 kB (271.70 kB gzip), one chunk | 415.76 kB (132.31 kB gzip) | Route-level code splitting; Recharts, D3 and dnd-kit moved into the 390 kB dashboard chunk |
+| Requests to render a dashboard's widgets | 1 + one per widget | 1 | `dashboard(id)` GraphQL query |
+| Widget cards re-rendered when the page updates for an unrelated reason (delete dialog, toast) | every card | 0 | `React.memo` on `WidgetCard` with stable props and a memoised dnd-kit id list |
+
+Sizes are Vite's production build output (`npm run build`); the render count is pinned by a
+component test (`WidgetCard.test.tsx`).
+
+Details in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md#performance).
 
 ## Screenshots
 
