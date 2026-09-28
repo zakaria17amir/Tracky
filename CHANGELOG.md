@@ -21,6 +21,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   gzipped); charting libraries load with the dashboard only
 - Widget cards are memoised, so dialogs and toasts no longer re-render every chart
 
+- Docker image (FrankenPHP, API + SPA on one origin) published to GHCR by CI after all tests pass,
+  with a smoke test against the running container; `docker-compose.yml` for local runs
+
 ### Changed
 
 - CI frontend matrix moved to Node 22 and 24 (Node 20 reached end of life)

@@ -5,6 +5,7 @@ configuring the environment, and the choices that matter once it is no longer ru
 
 ## Contents
 
+- [Docker image](#docker-image)
 - [How the two halves fit together](#how-the-two-halves-fit-together)
 - [Building](#building)
 - [Backend environment](#backend-environment)
@@ -12,6 +13,41 @@ configuring the environment, and the choices that matter once it is no longer ru
 - [Web server configuration](#web-server-configuration)
 - [Production checklist](#production-checklist)
 - [Hosting options](#hosting-options)
+
+## Docker image
+
+The quickest production-shaped deployment is the published image, which implements Option A below
+(one origin) with no web-server configuration to write.
+
+```bash
+docker run -d -p 8080:8080 -v tracky-data:/data ghcr.io/zakaria17amir/tracky:latest
+```
+
+**What is inside.** A multi-stage `Dockerfile` at the repo root: a Node stage builds the SPA, then a
+[FrankenPHP](https://frankenphp.dev) stage (PHP 8.4 + Caddy) installs the API's production
+dependencies and copies the SPA build into `public/`. Caddy serves hashed assets straight from disk;
+every other path reaches Laravel, where `/api/*` is the API, `/up` is the health check and anything
+else returns the SPA's `index.html` so React Router can resolve it.
+
+**On start** (`docker/entrypoint.sh`): create the SQLite file on the `/data` volume if needed,
+generate an `APP_KEY` once and keep it in `/data/app_key` (unless you pass `APP_KEY`), run
+migrations, seed the demo accounts on first start when `SEED_DEMO=true`, and cache config, routes
+and views.
+
+| Variable | Default | Notes |
+| --- | --- | --- |
+| `APP_KEY` | generated into `/data/app_key` | Set it explicitly to manage it yourself |
+| `SEED_DEMO` | unset | `true` seeds demo data the first time the database is created |
+| `DB_DATABASE` | `/data/database.sqlite` | Keep it on the volume |
+| `APP_URL` | `http://localhost` | Set to the public URL |
+
+Put a TLS-terminating proxy or load balancer in front, or set `SERVER_NAME` to your domain to let
+Caddy obtain a certificate itself.
+
+**How it is published.** The `publish` job in `.github/workflows/ci.yml` runs only on pushes to
+`main`, after the backend, frontend and E2E jobs pass. It builds the image, starts it, and checks
+`/up`, that `/` and a client route return the SPA, that `/api/user` answers `401`, and that the
+seeded demo account can log in. Only then does it push `latest` and `sha-<commit>` tags to GHCR.
 
 ## How the two halves fit together
 

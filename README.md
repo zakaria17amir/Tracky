@@ -12,7 +12,7 @@ and build dashboards out of configurable chart widgets.
 [![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Tests](https://img.shields.io/badge/tests-91%20passing-brightgreen)](#testing)
+[![Tests](https://img.shields.io/badge/tests-95%20passing-brightgreen)](#testing)
 
 <img src="docs/screenshots/dashboard.png" alt="Tracky dashboard showing line, bar, stat and streak widgets" width="100%">
 
@@ -113,7 +113,7 @@ Eloquent policies · PHPUnit · Pint
 **Frontend** — React 19 · TypeScript (strict) · Vite · React Router 7 · TanStack Query · Redux Toolkit ·
 Tailwind CSS · Flowbite React · Recharts · D3 (d3-scale, d3-time) · dnd-kit · Vitest · React Testing Library · Cypress
 
-**Tooling** — GitHub Actions (tests, lint, type-check, build, E2E) · CodeQL · Dependabot
+**Tooling** — GitHub Actions (tests, lint, type-check, build, E2E, Docker image to GHCR) · CodeQL · Docker · FrankenPHP
 
 ## Architecture
 
@@ -215,6 +215,18 @@ erDiagram
 Log a safe upsert and streak counting unambiguous. Column-level detail and the reasoning behind
 the split value columns are in [`docs/DATA-MODEL.md`](docs/DATA-MODEL.md).
 
+## Run with Docker
+
+Every push to `main` that passes CI publishes an image to GitHub Container Registry. It serves the
+API and the built SPA from one origin on port 8080, with SQLite on a volume:
+
+```bash
+docker run -p 8080:8080 -e SEED_DEMO=true -v tracky-data:/data ghcr.io/zakaria17amir/tracky:latest
+```
+
+Or build it from source with `docker compose up --build`. Open <http://localhost:8080> and sign in
+with the demo accounts below. Details in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md#docker-image).
+
 ## Quick start
 
 **Prerequisites:** PHP 8.4+ with `pdo_sqlite`, Composer 2, Node.js 22+.
@@ -300,8 +312,10 @@ Tracky/
 │   │   ├── store.ts             Redux store (widget-builder UI state)
 │   │   └── types.ts             shared contract mirroring API resources
 │   └── cypress/e2e/             end-to-end specs
+├── docker/                    container entrypoint
 ├── docs/                      architecture, API, data model, testing, deployment
-└── .github/workflows/         CI, CodeQL
+├── Dockerfile, docker-compose.yml
+└── .github/workflows/         CI (tests → Docker image to GHCR), CodeQL
 ```
 
 ## API
@@ -339,4 +353,4 @@ Request and response shapes, validation rules, error formats and rate limits are
 - [ ] Correlation view — plot two metrics against one another
 - [ ] Reminders for metrics left unlogged
 - [ ] Shareable read-only dashboard links
-- [ ] Postgres as the default driver, with a Docker Compose setup
+- [ ] Postgres as the default driver

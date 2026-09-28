@@ -135,6 +135,15 @@ Both parents are checked.
 | `repeating_a_query_works_on_a_serializing_cache_store` | A second identical query succeeds on a file cache — guards the Laravel 13 unserialize restriction |
 | `metrics_are_eager_loaded_so_queries_grow_only_with_per_widget_data` | Query count stays within 3 + 2 per widget — an N+1 on metrics fails it |
 
+### `SpaFallbackTest` — serving the SPA from the API container
+
+| Test | Asserts |
+| --- | --- |
+| `client_routes_serve_the_spa_when_it_is_built_into_public` | `/`, `/metrics` and nested client routes return `index.html` |
+| `unknown_api_routes_still_return_json_404` | The fallback never swallows `/api/*` |
+| `health_check_is_not_swallowed_by_the_spa_route` | `/up` stays the health check |
+| `root_describes_the_api_when_no_spa_is_built` | Development behaviour is unchanged |
+
 ### `AdminTest` — the role boundary
 
 | Test | Asserts |
@@ -255,6 +264,6 @@ Factories exist for every model (`UserFactory`, `MetricFactory`, `EntryFactory`,
 
 | Suite | Count | Scope |
 | --- | --- | --- |
-| PHPUnit feature | 58 tests, 152 assertions | REST and GraphQL contract, auth, ownership, cascades, validation |
+| PHPUnit feature | 62 tests, 166 assertions | REST and GraphQL contract, auth, ownership, cascades, validation |
 | Vitest + RTL | 33 tests | Chart data shaping, heatmap grid, GraphQL mapping, builder reducer, widget and configurator rendering |
 | Cypress E2E | 3 specs, 8 journeys | Registration, login, metric CRUD, logging, widget creation |

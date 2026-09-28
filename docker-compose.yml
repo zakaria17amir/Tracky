@@ -1,0 +1,14 @@
+services:
+  tracky:
+    image: ghcr.io/zakaria17amir/tracky:latest
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      # Seeds the demo accounts the first time the database is created.
+      SEED_DEMO: "true"
+    volumes:
+      - tracky-data:/data
+
+volumes:
+  tracky-data:
