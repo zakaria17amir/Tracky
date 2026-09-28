@@ -346,11 +346,3 @@ Request and response shapes, validation rules, error formats and rate limits are
 | [Testing](docs/TESTING.md) | What is tested at which layer, and how to run and extend the suites |
 | [Deployment](docs/DEPLOYMENT.md) | Production build, environment variables, and Postgres/MySQL migration notes |
 | [Changelog](CHANGELOG.md) | Release history |
-
-## Roadmap
-
-- [ ] CSV / JSON export of entries
-- [ ] Correlation view — plot two metrics against one another
-- [ ] Reminders for metrics left unlogged
-- [ ] Shareable read-only dashboard links
-- [ ] Postgres as the default driver
